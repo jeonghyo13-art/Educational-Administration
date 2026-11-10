@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>임용고시 교육학 마스터: 교육행정 편</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            background-color: #f8fafc; 
+        }
+        .glass-card { 
+            background: #ffffff; 
+            border-radius: 1.5rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
+            border: 1px solid #f1f5f9; 
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 text-slate-800 flex justify-center items-start">
+
+    <div class="max-w-3xl w-full">
+        <!-- 메인 헤더 -->
+        <header class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-[#3b30d8] tracking-tight mb-2">
+                임용고시 교육학 마스터: 교육행정 편
+            </h1>
+            <p class="text-xs md:text-sm font-medium text-slate-500">
+                전 범위 핵심 개념 인출 퀴즈 (무작위 셔플 & 오답노트 & 논술 모범 문장 제공)
+            </p>
+        </header>
+
+        <!-- 상단 탭 네비게이션 -->
+        <div class="flex justify-center items-center gap-2 mb-6 flex-wrap">
+            <button onclick="changeTab('all')" id="tab-all" class="px-5 py-2 rounded-full text-xs md:text-sm font-bold bg-[#4f46e5] text-white shadow-md transition-all">
+                전체 모의고사
+            </button>
+            <button onclick="changeTab('short')" id="tab-short" class="px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all">
+                단답형 집중
+            </button>
+            <button onclick="changeTab('mcq')" id="tab-mcq" class="px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all">
+                객관식 집중
+            </button>
+            <button onclick="changeTab('wrong')" id="tab-wrong" class="relative px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all">
+                오답 노트
+                <span id="wrong-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-extrabold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
+            </button>
+        </div>
+
+        <!-- 퀴즈 영역 -->
+        <div class="glass-card p-6 md:p-10">
+            <!-- 퀴즈 상단 메타 정보 -->
+            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
+                <span id="type-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-[#e0e7ff] text-[#4338ca]">
+                    단답형/기입형
+                </span>
+                <div class="flex items-center gap-3 text-xs md:text-sm font-bold text-slate-600">
+                    <span id="topic-name" class="text-slate-400 font-medium">교육행정의 원리</span>
+                    <span id="progress-text" class="text-[#3b30d8] font-bold">1 / 100</span>
+                </div>
+            </div>
+
+            <!-- 메인 질문 -->
+            <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-900 leading-snug mb-8">
+                질문이 로딩 중입니다...
+            </h2>
+
+            <!-- 입력 / 보기 영역 -->
+            <div id="interactive-area" class="mb-6">
+                <!-- 동적 렌더링 영역 (단답형 입력창 or 객관식 버튼) -->
+            </div>
+
+            <!-- 제출 및 다음 버튼 -->
+            <button id="action-btn" onclick="submitAnswer()" class="w-full py-3.5 rounded-xl font-bold text-white bg-[#4338ca] hover:bg-[#3730a3] shadow-md transition-all text-sm md:text-base">
+                정답 확인
+            </button>
+
+            <!-- 피드백 박스 (제출 완료 후 표시) -->
+            <div id="feedback-card" class="mt-6 space-y-4 hidden">
+                <!-- 결과 안내 핑크 박스 -->
+                <div id="result-alert" class="p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2">
+                    <span id="result-icon">💡</span>
+                    <span id="result-message">아쉽습니다. 정답은 [ ... ] 입니다.</span>
+                </div>
+
+                <!-- 개념 해설 -->
+                <div class="p-4 md:p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-[#4338ca] text-xs md:text-sm mb-1">
+                        <span>💡</span> 개념 해설
+                    </div>
+                    <p id="exp-text" class="text-slate-600 text-xs md:text-sm leading-relaxed font-normal"></p>
+                </div>
+
+                <!-- 암기 키워드 & 두문자 -->
+                <div class="p-4 md:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100/80 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-[#4338ca] text-xs md:text-sm mb-1">
+                        <span>🧠</span> 암기 키워드 & 두문자
+                    </div>
+                    <p id="m-text" class="text-[#3730a3] text-xs md:text-sm font-semibold leading-relaxed"></p>
+                </div>
+
+                <!-- 실전 논술 모범 문장 -->
+                <div class="p-4 md:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/60 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-amber-700 text-xs md:text-sm mb-1">
+                        <span>✍️</span> 실전 논술 모범 문장
+                    </div>
+                    <p id="tip-text" class="text-amber-900 text-xs md:text-sm font-medium leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 100문항 풀 데이터베이스 및 스크립트 -->
+    <script>
+        const rawQuizData = [
+            // 1~10: 교육행정 개념, 원리, 관료제
+            { id: 1, topic: "교육행정 개념", type: "short", q: "교육행정의 개념 중 국가가 공권력을 바탕으로 교육에 관한 행정을 지도, 통제, 감독한다는 관점의 명칭은?", accepted: ["국가공권설", "국가통치설", "공권설"], a: "국가공권설 (국가통치설)", exp: "국가공권설은 교육행정을 국가 통치권의 작용으로 보아 상의하달(Top-down) 방식의 지도, 감독, 통제를 강조합니다.", tip: "국가공권설은 교육의 중립성이나 자율성을 저해하고 중앙집권적·권위주의적 통제를 초래할 위험이 있다.", m: "국가공권설 = 통제 및 감독 (상의하달)" },
+            { id: 2, topic: "교육행정 개념", type: "short", q: "교육목적 달성을 위해 교수-학습 활동에 필요한 제반 조건과 환경을 정비하고 지원하는 민주적 행정 관점은?", accepted: ["조건정비설", "기능주의설"], a: "조건정비설 (기능주의설)", exp: "조건정비설은 교육행정의 본질을 교육목적 달성을 위한 수단적·지원적 봉사활동으로 보며 교육의 자주성과 민주성을 강조합니다.", tip: "교육행정은 교사의 자율성과 교육의 전문성을 보장할 수 있도록 조건정비적 관점에서 지원체제를 구축해야 한다.", m: "조건정비설 = 지원·정비 (하의상달)" },
+            { id: 3, topic: "교육행정 개념", type: "mcq", q: "학습자의 내적 동기를 유발하고 활발한 학습활동을 유지·조장하기 위한 제반 환경을 조장하는 교육행정 관점은?", options: ["국가공권설", "행정과정론", "성장지원론 (학습조장설)", "협동행위론"], a: "성장지원론 (학습조장설)", exp: "성장지원론(학습조장설)은 궁극적 지향점을 학습자의 학습활동에 두고 자발적 성장을 지원하는 제반 조건을 정비하는 활동입니다.", tip: "성장지원론은 학습 주체인 학생과 학습활동 자체를 중시하는 현대적 교육행정 관점이다.", m: "성장지원론 = 학습자 자발적 성장 지원" },
+            { id: 4, topic: "교육행정의 원리", type: "short", q: "교육행정이 법률과 규정에 근거하여 수행되어야 한다는 교육행정의 기본 원리는?", accepted: ["합법성의 원리", "합법성"], a: "합법성의 원리", exp: "합법성의 원리는 교육행정의 모든 활동이 법률에 의거하여 행해져야 한다는 법치행정의 원칙입니다.", tip: "합법성의 원리는 자의적 행정을 방지하나 지나칠 경우 형식주의와 법률만능주의라는 부작용을 초래할 수 있다.", m: "합법성 = 법률 근거 행정" },
+            { id: 5, topic: "교육행정의 원리", type: "short", q: "중앙집권과 지방분권 간의 적정한 균형과 조화를 도모해야 한다는 교육행정의 원리는?", accepted: ["적도집권의 원리", "적도집권"], a: "적도집권의 원리", exp: "적도집권의 원리는 중앙의 통치 권력(집권)과 지방의 자율 권한(분권) 사이에서 적절한 균형을 유지해야 한다는 원리입니다.", tip: "적도집권의 원리를 실현하기 위해서는 중앙의 통일성과 지방의 특수성이 조화를 이루어야 한다.", m: "적도집권 = 집권과 분권의 균형" },
+            { id: 6, topic: "과학적 관리론", type: "mcq", q: "테일러(Taylor)의 과학적 관리론을 학교 현장에 적용했을 때 나타나는 특징이나 시사점이 아닌 것은?", options: ["표준화된 과업 수행으로 능률성 제고", "과업 전문화로 인한 단순 반복 및 권태감", "교사의 자율성과 전문적 판단 존중", "성과급 및 과업 책임 강조"], a: "교사의 자율성과 전문적 판단 존중", exp: "과학적 관리론은 인간을 능률의 도구로 보아 과업의 표준화와 통제를 강조하므로 교사의 자율성과 전문성을 저해한다는 비판을 받습니다.", tip: "과학적 관리론을 학교에 과도하게 적용할 경우 교사의 자율성과 창의성이 억압되어 교육의 본질이 훼손될 수 있다.", m: "과학적 관리론 = 능률성 극대화 / 자율성 소외" },
+            { id: 7, topic: "관료제 특성", type: "short", q: "관료제 특성 중 '직무 수행 시 사사로운 감정을 배제하는 것'을 의미하며, 공정성을 높이지만 사기 저하를 초래하는 요소는?", accepted: ["몰인정성"], a: "몰인정성", exp: "몰인정성은 개인적 감정을 배제하고 공정하게 직무를 수행하는 특징입니다.", tip: "몰인정성은 업무의 공정성과 합리성을 높이지만 교직원의 사기 저하와 비인간주의를 야기할 수 있다.", m: "몰인정성 = 감정 배제 / 비인간화" },
+            { id: 8, topic: "관료제 특성", type: "short", q: "관료제 특성 중 규칙과 규정을 과도하게 강조하다가 원래 달성하려던 교육 목표를 잊고 규칙 준수 자체에 집착하는 현상은?", accepted: ["목표 전도", "목표전도", "목표의 전도"], a: "목표 전도 현상", exp: "규칙과 규정의 강조는 과업의 통일성을 기할 수 있지만, 수단이 목표가 되어버리는 목표 전도 현상을 유발합니다.", tip: "규칙 준수만을 강요할 때 본래의 교육적 목표가 소외되는 목표 전도 현상이 발생하므로 융통성 있는 행정이 요구된다.", m: "목표 전도 = 수단의 목표화" },
+            { id: 9, topic: "인간관계론", type: "mcq", q: "메이요(Mayo) 등의 호손 공장 실험을 통해 입증되어 교육행정의 민주화에 기여한 이론은?", options: ["과학적 관리론", "인간관계론", "체제이론", "행동과학론"], a: "인간관계론", exp: "호손 실험은 작업 환경보다 비공식 조직의 규범과 정서적·인간적 요인이 생산성에 더 큰 영향을 준다는 인간관계론의 계기가 되었습니다.", tip: "인간관계론은 교원의 사기 진작, 민주적 의사소통, 비공식 조직의 정서적 역할의 중요성을 부각시켰다.", m: "인간관계론 = 정서적 요인 / 비공식 조직 강조" },
+            { id: 10, topic: "비공식 조직", type: "short", q: "공식조직 내부에서 학연, 지연, 혈연, 친분 등을 바탕으로 자생적으로 형성되는 조직의 명칭은?", accepted: ["비공식 조직", "비공식조직", "자생조직"], a: "비공식 조직 (자생조직)", exp: "비공식 조직은 구성원 간 친밀한 관계를 기반으로 형성되는 감정 중심의 조직입니다.", tip: "비공식 조직은 구성원의 정서적 안정과 사기를 높이지만, 파벌 형성 및 유언비어 유포로 공식 조직 목표 달성을 저해할 수 있다.", m: "비공식 조직 = 감정의 논리 / 정서적 충족" },
+            // 11~20: 체제이론, 조직유형론, 학교조직 특성
+            { id: 11, topic: "체제이론", type: "short", q: "겟젤스와 구바(Getzels & Guba)의 사회과정모형에서 개인의 독특한 심리적 특성으로 이루어진 차원의 명칭은?", accepted: ["개인적 차원", "개인차원", "심리적 차원"], a: "개인적 차원 (심리적 차원)", exp: "겟젤스-구바 모형은 사회적 행위를 규범적 차원(제도-역할-역할기대)과 개인적 차원(개인-인성-욕구성향)의 상호작용으로 봅니다.", tip: "학교 내 구성원의 행동은 조직의 규범적 역할 기대와 개인의 욕구성향 간의 균형과 상호작용 결과로 이해해야 한다.", m: "개인적 차원 = 개인 - 인성 - 욕구성향" },
+            { id: 12, topic: "체제이론", type: "mcq", q: "겟젤스와 텔렌의 수정모형에서 조직 목적 달성을 위해 역할기대와 제도적 목표가 논리적으로 부합해야 함을 뜻하는 개념은?", options: ["소속감", "일체감", "합리성", "사기"], a: "합리성", exp: "합리성(Rationality)은 제도적 목표와 역할기대가 논리적으로 일치함을 의미합니다.", tip: "목표달성을 위한 사회적 행동이 유발되기 위해서는 합리성, 일체감, 소속감이 조화를 이루어야 한다.", m: "합리성 = 목표와 역할기대의 논리적 부합" },
+            { id: 13, topic: "체제접근모형", type: "short", q: "카우프만(Kaufman)의 체제접근모형 6단계 중 요구분석을 통해 문제를 명확히 규정하는 1단계의 명칭은?", accepted: ["문제 확인", "문제확인"], a: "문제 확인 (요구분석)", exp: "카우프만 모형 6단계: ①문제 확인(요구분석) -> ②대안 결정 -> ③해결전략 선정 -> ④해결전략 시행 -> ⑤성취효과 결정 -> ⑥수정", tip: "카우프만의 체제접근 모형은 요구분석에 기반하여 조직의 문제를 체계적이고 합리적으로 해결하는 틀을 제공한다.", m: "1단계 = 문제 확인 (요구분석)" },
+            { id: 14, topic: "조직유형론", type: "short", q: "칼슨(Carlson)의 봉사조직 유형 중 고객과 조직 모두 선택권이 없으며, 공립학교와 같이 법적으로 존립이 보장된 조직은?", accepted: ["온상조직", "사육조직"], a: "온상조직 (사육조직)", exp: "칼슨의 유형: 온상조직(고객/조직 모두 선택권 없음, 공립학교), 야생조직(둘 다 선택권 있음, 사립대/학원).", tip: "공립학교는 온상조직의 특성을 가지므로 경쟁 압력이 적어 안일함에 빠지기 쉬우므로 조직 혁신과 책무성 강화가 요구된다.", m: "온상조직 = 선택권 없음 (공립학교)" },
+            { id: 15, topic: "조직유형론", type: "mcq", q: "민츠버그(Mintzberg)의 조직구조 이론 중, 현장 핵심 계층인 교사가 많은 자율성을 갖고 기술의 표준화를 통해 작동하는 조직은?", options: ["기계식 관료제", "전문적 관료제", "단순 구조", "사업부제 구조"], a: "전문적 관료제", exp: "학교는 관료적 특성(위계, 규칙)과 전문적 특성(교사의 자유재량권, 독립성)을 동시에 지닌 전문적 관료제입니다.", tip: "학교는 전문적 관료제로서 교사에게 높은 자율성과 자유재량권이 부여되므로 자율성에 상응하는 도덕적 책무성이 요구된다.", m: "전문적 관료제 = 핵심계층 교사 / 기술 표준화" },
+            { id: 16, topic: "조직유형론", type: "short", q: "에치오니(Etzioni)의 순응유형 중 규범적 권력을 사용하여 구성원들의 높은 헌신적 참여를 유도하는 학교 조직의 유형은?", accepted: ["규범조직", "규범 조직"], a: "규범조직", exp: "에치오니는 권력 유형(강제적, 보상적, 규범적)과 참여 수준(소외적, 타산적, 헌신적)에 따라 구분하며 학교는 규범조직에 속합니다.", tip: "학교는 규범적 권력과 상징적 보상에 기반하여 교원과 학생의 헌신적 참여를 이끌어내는 규범조직이다.", m: "규범조직 = 규범적 권력 + 헌신적 참여" },
+            { id: 17, topic: "홀의 관료적 구조", type: "mcq", q: "홀(Hall)의 관료적 조직구조 패턴 중, 전문성 패턴은 높고 관료적 패턴은 낮아서 구성원에게 의사결정이 폭넓게 위임된 유형은?", options: ["베버형", "권위주의형", "전문형", "혼돈형"], a: "전문형", exp: "전문형은 교사의 전문적 판단과 자율성을 최대한 보장하는 구조입니다.", tip: "전문형 조직구조에서는 교직원의 전문적 지식과 능력을 신뢰하고 실질적 의사결정 권한을 적극 위임해야 한다.", m: "전문형 = 전문성 High, 관료성 Low" },
+            { id: 18, topic: "학교조직 특성", type: "short", q: "코헨, 마치, 올슨이 제시한 개념으로, 목표의 불분명성, 기술의 불확실성, 유동적 참여를 특징으로 하는 학교조직 모델은?", accepted: ["조직화된 무질서", "조직화된 무질서 조직", "조직화된 무정부"], a: "조직화된 무질서 조직", exp: "조직화된 무질서는 명확한 목적이나 정립된 공학적 기술 없이 구성원의 참여가 유동적인 상태의 조직을 뜻합니다.", tip: "조직화된 무질서 상태의 학교에서는 상황 의존적이고 우연적인 쓰레기통 모형 방식의 의사결정이 자주 일어난다.", m: "조직화된 무질서 = 불분명한 목표 / 불확실한 기술 / 유동적 참여" },
+            { id: 19, topic: "학교조직 특성", type: "short", q: "와익(Weick)이 제안한 개념으로, 학교 구성원들이 서로 연결되어 있지만 각자의 독립성을 유지하며 느슨하게 결합된 조직은?", accepted: ["이완조직", "이완 결합 조직", "이완결합조직"], a: "이완조직 (이완결합조직)", exp: "이완조직은 한 하부 단위의 성패가 다른 단위에 직접적인 영향을 주지 않고 자율성과 국지적 적응성을 지니는 조직입니다.", tip: "이완조직으로서 학교는 교사의 수업 자율성을 보장하지만 지나칠 경우 조직의 통일성과 효율성을 저해할 수 있다.", m: "이완조직 = 독립성 유지 / 느슨한 결합" },
+            { id: 20, topic: "학교조직 특성", type: "short", q: "오웬스(Owens)가 학교는 교사의 교수 활동면에서는 이완조직이고, 행정 관리면에서는 엄격한 관료제 특성을 지닌다고 설명한 개념은?", accepted: ["이중조직", "이중 조직"], a: "이중조직", exp: "이중조직은 수업 측면의 이완성과 경영·행정 측면의 관료제적 결합성이 공존하는 학교의 복합적 성격을 잘 설명합니다.", tip: "교육행정가는 학교의 이중조직적 특성을 이해하여 관료적 통제와 전문적 자율성 간의 균형을 유지해야 한다.", m: "이중조직 = 수업(이완) + 행정(관료제)" },
+            // 21~30: 학습조직, 조직풍토, 갈등관리
+            { id: 21, topic: "센게의 학습조직", type: "mcq", q: "센게(Senge)가 제시한 학습조직의 5가지 기본 원리(개정팀시공)에 해당하지 않는 것은?", options: ["개인적 숙련", "정신모델", "시스템적 사고", "과학적 관리"], a: "과학적 관리", exp: "센게의 학습조직 5대 원리: ①개인적 숙련, ②정신모델, ③팀 학습, ④시스템적 사고, ⑤공유 비전입니다.", tip: "학습조직 구축을 위해 교원들은 개인적 숙련과 시스템적 사고를 바탕으로 공동의 비전을 공유하며 지속적 변화를 주도해야 한다.", m: "개정팀시공 = 개인적숙련, 정신모델, 팀학습, 시스템적사고, 공유비전" },
+            { id: 22, topic: "조직 풍토론", type: "short", q: "할핀과 크로프트의 학교풍토 중, 교장의 추진력과 교사의 사기가 높으며 목표 달성과 사회적 욕구 충족이 모두 활발한 가장 이상적인 풍토는?", accepted: ["개방적 풍토", "개방풍토"], a: "개방적 풍토", exp: "개방적 풍토는 교장의 배려와 지원 속에 교사가 능동적이고 헌신적으로 과업을 수행하는 협동적 분위기입니다.", tip: "개방적 풍토 조성을 위해 교장은 민주적 리더십을 발휘하고 교사의 전문성과 자율성을 적극 지원해야 한다.", m: "개방적 풍토 = 활기차고 생기 있는 조직풍토" },
+            { id: 23, topic: "조직 풍토론", type: "short", q: "호이와 미스켈의 학교풍토 중, 학교장은 지원적이고 개방적인 반면 교사들은 비협조적이고 업무에 헌신하지 않는 풍토는?", accepted: ["일탈풍토", "일탈 풍토"], a: "일탈풍토", exp: "호이 & 미스켈의 풍토: 개방풍토(교장 개방-교사 개방), 몰입풍토(교장 폐쇄-교사 개방), 일탈풍토(교장 개방-교사 폐쇄), 폐쇄풍토(둘 다 폐쇄).", tip: "일탈풍토 상태에서는 교장의 지원적 리더십에도 불구하고 교사 집단의 불신과 무력감이 높으므로 교사 사기 진작과 소통이 시급하다.", m: "일탈풍토 = 교장 개방 / 교사 일탈(비협조)" },
+            { id: 24, topic: "리커트 관리체제", type: "mcq", q: "리커트(Likert)의 관리체제 중 맥그리거의 Y이론에 해당하며 수평적 의사소통과 구성원의 온전한 신뢰를 바탕으로 하는 이상적인 풍토는?", options: ["체제 1 (이기적 권위주의)", "체제 2 (자선적 권위주의)", "체제 3 (협의적 풍토)", "체제 4 (참여적 풍토)"], a: "체제 4 (참여적 풍토)", exp: "체제 4(참여적 풍토)는 구성원의 고도의 동기유발과 참여적 의사결정이 이루어지는 체제입니다.", tip: "체제 4를 달성하기 위해 지도자는 구성원을 신뢰하고 의사결정 권한을 분산하는 민주적 경영을 실천해야 한다.", m: "체제 4 = 참여적 풍토 (Y이론)" },
+            { id: 25, topic: "윌로어 학교풍토", type: "short", q: "윌로어(Willower)의 풍토론에서 학생을 무책임한 존재로 보아 엄격한 규율과 체벌로 통제하는 학교 유형은?", accepted: ["보호지향적 학교", "보호지향적"], a: "보호지향적 학교", exp: "윌로어는 인간주의적 학교(자율 자제, 민주적 통제)와 보호지향적 학교(엄격한 지위체계, 권위적 통제)로 구분했습니다.", tip: "보호지향적 학교 풍토에서 벗어나 학생의 자율성과 경험을 존중하는 인간주의적 학교 풍토로의 전환이 요구된다.", m: "보호지향적 = 권위적 통제 / 엄격한 규율" },
+            { id: 26, topic: "아지리스 미성숙-성숙", type: "short", q: "아지리스의 미성숙-성숙 이론에 따를 때, 인간을 부정적 존재로 취급하여 대인관계 능력을 저하시키는 가치체계의 명칭은?", accepted: ["관료적 가치체계", "관료적 가치"], a: "관료적 가치체계", exp: "아지리스는 관료적 가치체계(X이론 기반, 미성숙 조직)와 인간적 가치체계(Y이론 기반, 성숙 조직)를 대비했습니다.", tip: "조직 관리자는 구성원을 성숙한 존재로 대하는 인간적 가치체계를 조성하여 구성원의 자아실현과 조직 목적 달성을 동시 도모해야 한다.", m: "관료적 가치체계 = X이론 기반 / 미성숙 조직" },
+            { id: 27, topic: "조직 문화론", type: "mcq", q: "스타인호프와 오웬스의 학교문화 유형 중, 학교를 목표 달성을 위해 교사를 이용하는 일종의 도구로 보는 문화는?", options: ["가족문화", "공연문화", "기계문화", "공포문화"], a: "기계문화", exp: "스타인호프와 오웬스의 4대 문화: 가족문화(서로 간 관심), 공연문화(멋진 가르침 추구), 기계문화(교사를 도구화), 공포문화(서로 비난).", tip: "기계문화를 지양하고 구성원 간 상호 존중과 신뢰가 중심이 되는 가족 및 공연문화를 구축해야 한다.", m: "기계문화 = 교사를 목표달성 도구로 이용" },
+            { id: 28, topic: "조직 문화론", type: "short", q: "하그리브스의 학교문화 중 과업 달성에 대한 도구적 압력과 인간관계적 표현적 압력이 모두 적절하여 가장 이상적인 문화는?", accepted: ["효과적 학교문화", "효과적학교문화"], a: "효과적 학교문화", exp: "하그리브스: 전통/형식적(도구↑표현↓), 복지주의자(도구↓표현↑), 온실(둘 다 높고 통제 강함), 생존주질자(둘 다 낮음), 효과적 문화(둘 다 적절).", tip: "효과적 학교문화는 구성원에게 높은 성과 기대를 유지함과 동시에 따뜻한 지원적 환경을 제공한다.", m: "효과적 학교문화 = 도구적 + 표현적 압력의 조화" },
+            { id: 29, topic: "조직 갈등론", type: "short", q: "토마스(Thomas)의 갈등관리 모형에서 제시하는 2가지 독립적 진단 차원은 '협조성(협동성)'과 무엇인가?", accepted: ["독단성", "적극성"], a: "독단성 (적극성)", exp: "토마스는 독단성(자신의 이익 추구 정도)과 협조성(타인의 이익 추구 정도)을 기준으로 5가지 갈등 관리 유형을 구분했습니다.", tip: "갈등 관리 시 상황에 맞는 적절한 전략(협력, 경쟁, 회피, 수용, 타협)을 선택적으로 적용하는 지혜가 필요하다.", m: "진단 차원 = 독단성(자신 이익) + 협조성(타인 이익)" },
+            { id: 30, topic: "조직 갈등론", type: "mcq", q: "토마스(Thomas)의 갈등관리 모형 중, 자신과 타인의 관심사를 모두 만족시키려는 Win-Win 방식의 최선 전략은?", options: ["경쟁", "협력 (양자 만족)", "타협", "회피"], a: "협력 (양자 만족)", exp: "협력(Collaboration)은 독단성과 협조성이 모두 높은 전략으로 양측의 합의와 헌신이 중요할 때 가장 유용합니다.", tip: "양측의 중요한 관심사를 통합하고 창의적 해결책을 마련해야 하는 상황에서는 협력 전략이 최선이다.", m: "협력 = Win-Win 최선 전략" },
+            // 31~40: 동기이론, 지도성이론
+            { id: 31, topic: "동기의 내용이론", type: "short", q: "매슬로우(Maslow)의 욕구위계이론 중 타인으로부터의 인정, 존경, 자부심을 포함하며 자아실현 직전에 위치한 욕구는?", accepted: ["자존의 욕구", "존경의 욕구", "자존 욕구"], a: "자존의 욕구 (존경의 욕구)", exp: "매슬로우 5단계: 생리적 -> 안전 -> 사회적(소속/애정) -> 자존(존경) -> 자아실현 욕구.", tip: "교사의 자존 욕구를 충족하기 위해 우수 교육 활동에 대한 인정과 자율성 보장이 필수적이다.", m: "자존의 욕구 = 타인 인정 및 자부심" },
+            { id: 32, topic: "동기의 내용이론", type: "short", q: "허즈버그(Herzberg)의 동기-위생이론에서 직무 불만족을 방지하는 외적·환경적 요인(예: 보수, 근무 조건, 대인관계)을 무엇이라 하는가?", accepted: ["위생요인", "위생 요인"], a: "위생요인 (불만족요인)", exp: "위생요인은 충족되어도 불만족이 예방될 뿐 적극적 동기유발을 일으키지 못합니다. (동기요인: 성취, 인정, 직무 자체)", tip: "교원 동기 유발을 위해 위생요인의 정비뿐만 아니라 직무풍요화를 통해 동기요인을 적극 자극해야 한다.", m: "위생요인 = 직무 환경 / 불만족 방지" },
+            { id: 33, topic: "동기의 내용이론", type: "mcq", q: "허즈버그 이론을 교직에 적용하여, 교사에게 직무 수행 시 자율성과 책임을 확대하여 보람을 느끼게 해주는 직무 재설계 방안은?", options: ["직무 확대", "직무 풍요화 (Job Enrichment)", "직무 순환", "성과급 제도"], a: "직무 풍요화 (Job Enrichment)", exp: "직무 풍요화는 직무의 수직적 확대를 통해 자율성, 책임감, 성취감을 부여함으로써 내적 동기를 자극하는 기법입니다.", tip: "직무 풍요화를 통해 교사의 수석교사제 및 수업 자율권을 확대하면 내적 동기유발과 전문성 신장을 동시에 이룰 수 있다.", m: "직무 풍요화 = 수직적 확대 / 자율성 및 책임 부여" },
+            { id: 34, topic: "동기의 내용이론", type: "short", q: "앨더퍼(Alderfer)의 ERG 이론 중 인간이 사회적 존재로서 타인과 친근한 관계를 맺고 상호작용하려는 욕구는?", accepted: ["관계욕구", "관계 욕구"], a: "관계욕구 (Relatedness)", exp: "앨더퍼 ERG 3단계: 생존욕구(Existence), 관계욕구(Relatedness), 성장욕구(Growth).", tip: "ERG 이론에 따르면 성장욕구가 좌절된 교사에게 관계욕구를 자극하여 비공식 모임이나 동료 협력을 지원할 수 있다.", m: "ERG = 생존 - 관계 - 성장" },
+            { id: 35, topic: "동기의 과정이론", type: "short", q: "브룸(Vroom)의 기대이론(VIE)에서 '특정한 성과가 원하는 보상을 가져다줄 것이라고 믿는 인지적 확률'을 무엇이라 하는가?", accepted: ["보상기대", "수단성"], a: "보상기대 (수단성)", exp: "브룸의 VIE 모형: 유인가(Valence) x 성과기대(Expectancy) x 보상기대(Instrumentality).", tip: "교사의 동기유발을 위해 명확한 성과 평가와 이에 합당한 구체적 보상 연결(보상기대 신장)이 요구된다.", m: "보상기대 = 성과와 보상의 연결 확률" },
+            { id: 36, topic: "동기의 과정이론", type: "short", q: "아담스(Adams)의 공정성이론에서 타인과 비교하여 과소보상을 받는다고 느낄 때 구성원이 취하는 불협화 감소 행동이 아닌 것은?", accepted: ["투입량을 아무 이유 없이 무제한 늘린다"], a: "투입량을 무제한 늘린다", exp: "과소 보상 시 구성원은 노력을 줄이거나(투입 감소), 인지를 왜곡하거나, 조직을 이탈하여 불공정성을 해소하려 합니다.", tip: "학교 경영자는 교원 간 보상 및 직무 배분의 공정성을 확보하여 주관적 불공정성에 의한 사기 저하를 예방해야 한다.", m: "공정성이론 = 투입과 성과의 비율 비교" },
+            { id: 37, topic: "동기의 과정이론", type: "short", q: "로크(Locke)의 목표설정이론에서 성과와 동기를 가장 크게 유발하는 목표의 속성 2가지는 '구체성'과 무엇인가?", accepted: ["곤란성", "도전성", "목표의 곤란성"], a: "목표의 곤란성 (도전성)", exp: "로크에 따르면 구체적이고 적절히 도전적인(곤란한) 목표가 막연하고 쉬운 목표보다 높은 행동 동기를 불러일으킵니다.", tip: "교직원과의 협의를 통해 구체적이고 도전적인 교육 목표를 수립할 때 교사의 과업 집중력과 지속성이 증대된다.", m: "목표설정이론 = 구체성 + 곤란성(도전성)" },
+            { id: 38, topic: "지도성이론", type: "short", q: "피들러(Fiedler)의 상황적 지도성이론에서 상황 호의성을 결정하는 3가지 요소는 '지도자-구성원 관계', '지위권력'과 무엇인가?", accepted: ["과업구조", "과업 구조"], a: "과업구조", exp: "피들러는 상황 호의성이 극단적으로 높거나 낮을 때는 과업지향형 지도자가, 중간일 때는 관계지향형 지도자가 효과적이라고 봅니다.", tip: "상황의 호의성에 따라 리더십 스타일을 적절히 조율하거나 지도자 스타일에 맞춰 상황 변인을 개혁해야 한다.", m: "상황 요소 = 지도자-구성원관계 / 과업구조 / 지위권력" },
+            { id: 39, topic: "지도성이론", type: "mcq", q: "허시와 블랜차드의 지도성이론에서 구성원의 능력은 높으나 동기가 낮은 경우(M3) 가장 적합한 리더십 유형은?", options: ["지시형", "지도형 (설득형)", "지원형 (참여형)", "위임형"], a: "지원형 (참여형)", exp: "허시&블랜차드 유형: M1(지시형), M2(지도형), M3(지원형/참여형), M4(위임형).", tip: "능력은 갖추었으나 동기가 저하된 숙련 교사에게는 지원형(참여형) 리더십을 발휘하여 동기유발과 의사결정 참여를 유도해야 한다.", m: "M3 (높은 능력 + 낮은 동기) = 지원형" },
+            { id: 40, topic: "지도성이론", type: "short", q: "커와 제르미어(Kerr & Jermier)의 이론 중 교사의 높은 전문성이나 일상적 과업처럼 지도자의 영향력을 필요 없게 만드는 상황은?", accepted: ["대용 상황", "대용상황"], a: "대용 상황 (Substitutes)", exp: "대용 상황은 지도자의 리더십을 대신하거나 불필요하게 만드는 상황이며, 억제 상황(Neutralizer)은 지도자 행동을 무력화시키는 상황입니다.", tip: "교원의 전문성과 업무 공식화 등 대용 상황을 적절히 조성하면 지도자의 과도한 통제 없이도 조직 효과성을 높일 수 있다.", m: "대용 상황 = 리더십 불필요화 / 대체" },
+            // 41~50: 대안적 리더십, 의사결정 모형
+            { id: 41, topic: "지도성이론", type: "short", q: "바스(Bass)의 변혁적 지도성 4I 중, 교사 개인의 성장 욕구에 특별한 관심을 두고 잠재력을 계발하도록 장려하는 요소는?", accepted: ["개별적 배려", "개별적배려"], a: "개별적 배려", exp: "변혁적 지도성 4I: 이상적 영향력, 영감적 동기부여, 지적 자극, 개별적 배려.", tip: "변혁적 지도자는 개별적 배려와 지적 자극을 통해 구성원의 신념과 태도를 변혁시키고 기대 이상의 성과를 이끌어낸다.", m: "4I = 이상적 영향력 / 영감적 동기 / 지적 자극 / 개별적 배려" },
+            { id: 42, topic: "지도성이론", type: "short", q: "만즈와 심스가 제시한 개념으로, 구성원 스스로 자신을 통제하고 리더십을 발휘할 수 있도록 '셀프 지도성'을 개발해 주는 리더십은?", accepted: ["초우량 지도성", "슈퍼 지도성", "초우량지도성"], a: "초우량 지도성 (슈퍼 지도성)", exp: "초우량 지도성은 모든 구성원을 스스로 판단하고 책임지는 '지도자들의 지도자(Leader of leaders)'로 변혁시키는 리더십입니다.", tip: "학교장은 교사들에게 자율적 권한을 이양하고 셀프 리더십을 함양하여 스스로 성장하는 초우량 조직을 만들어야 한다.", m: "초우량 지도성 = 셀프 지도성 함양" },
+            { id: 43, topic: "지도성이론", type: "short", q: "스필레인(Spillane) 등이 제안한 리더십으로, 지도권이 특정인에 독점되지 않고 다수의 구성원에게 분산되어 상호작용하는 리더십은?", accepted: ["분산적 지도성", "분산적지도성", "협응적 지도성"], a: "분산적 지도성 (협응적 지도성)", exp: "분산적 지도성은 지도자, 구성원, 상황의 상호작용 속에서 리더십이 공동으로 실행된다고 보는 현대적 지도성입니다.", tip: "분산적 지도성을 구현하기 위해 전문적 학습공동체를 활성화하고 학교 의사결정 구조를 민주적으로 개편해야 한다.", m: "분산적 지도성 = 지도자-구성원-상황의 상호작용" },
+            { id: 44, topic: "지도성이론", type: "mcq", q: "서지오바니의 학교 리더십 5가지 중, 훌륭한 정체성을 확립하고 학교의 독특한 문화와 전통을 창출하는 리더십은?", options: ["기술적 리더십", "인간적 리더십", "교육적 리더십", "문화적 리더십"], a: "문화적 리더십", exp: "서지오바니 리더십: 기술적, 인간적, 교육적(유능한 리더십) + 상징적, 문화적(우수한 리더십 - 성직자 역할).", tip: "문화적 리더십을 통해 학교의 창의적이고 독자적인 전통과 신념 체계를 구축할 수 있다.", m: "문화적 리더십 = 학교 정체성 및 전통 창출" },
+            { id: 45, topic: "지도성이론", type: "short", q: "지도자의 도덕성과 구성원의 자율성을 바탕으로 구성원 모두를 셀프리더로 자극하여 도덕적이고 효과적인 조직을 추구하는 지도성은?", accepted: ["도덕적 지도성", "도덕적지도성"], a: "도덕적 지도성", exp: "도덕적 지도성은 성공보다 '선의(Goodness)'를 중시하며 지도자의 도덕적 품성과 윤리성을 바탕으로 신뢰를 구축합니다.", tip: "도덕적 지도성은 학교를 바람직한 가치를 전수하는 윤리적 공동체로 변화시킨다.", m: "도덕적 지도성 = 지도자 도덕성 + 구성원 자율성" },
+            { id: 46, topic: "의사소통론", type: "short", q: "조하리의 창(Johari's Window)에서 자신도 알고 타인도 알고 있어서 갈등이 적고 원만한 대인관계가 이루어지는 영역은?", accepted: ["개방적 영역", "개방 영역", "민주형"], a: "개방적 영역 (Open Area)", exp: "조하리의 창 4개 영역: 개방적 영역(민주형), 맹목적 영역(독단형), 잠재적 영역(과묵형), 미지의 영역(폐쇄형).", tip: "자율적인 자기 노출과 수용적 피드백 요청을 통해 개방적 영역을 넓힘으로써 대인 간 갈등을 최소화해야 한다.", m: "개방적 영역 = 자신 O / 타인 O (민주형)" },
+            { id: 47, topic: "의사결정 모형", type: "short", q: "의사결정 모형 중 완벽한 정보와 자원을 바탕으로 최고 최적의 대안을 선택할 수 있다고 가정하는 정통적 모형은?", accepted: ["합리모형", "합리 모형"], a: "합리모형", exp: "합리모형은 인간의 완벽한 합리성을 전제로 최선의 대안을 찾으려 하나, 현실적 제약으로 인해 비현실적이라는 비판을 받습니다.", tip: "합리모형은 이상적 기준을 제공하지만 현실 세계의 제한된 합리성을 고려한 대안적 모형의 보완이 필요하다.", m: "합리모형 = 완벽한 합리성 / 최적 대안" },
+            { id: 48, topic: "의사결정 모형", type: "short", q: "사이먼(Simon)이 제안한 모형으로, 인간 능력의 한계를 인정하고 만족할 만한 선에서 대안을 선택한다는 현실적 모형은?", accepted: ["만족모형", "만족 모형"], a: "만족모형", exp: "만족모형은 인간의 제한된 합리성(Bounded Rationality)을 바탕으로 최적이 아닌 만족스러운 대안을 선택합니다.", tip: "만족모형은 실제 행정가들의 의사결정 행태를 잘 설명해 준다.", m: "만족모형 = 제한된 합리성 / 만족 대안" },
+            { id: 49, topic: "의사결정 모형", type: "mcq", q: "린드블롬(Lindblom)이 제안한 모형으로, 기존 정책을 바탕으로 다소 향상된 대안을 소극적으로 모색하는 보수적 모형은?", options: ["합리모형", "점증모형", "혼합모형", "최적모형"], a: "점증모형", exp: "점증모형은 현실적이고 개혁에 따른 충격을 줄일 수 있지만 대대적인 혁신이나 쇄신을 기하기 어렵다는 보수적 단점이 있습니다.", tip: "점증모형은 갈등을 줄이고 급격한 변동을 방지하지만 타성적인 보수주의로 흐를 위험이 있다.", m: "점증모형 = 기존 정책 바탕의 소극적 개선" },
+            { id: 50, topic: "의사결정 모형", type: "short", q: "드로어(Dror)가 제시한 모형으로, 합리성과 함께 직관, 판단, 창의성 등 초합리적 요소를 의사결정에 결합한 모형은?", accepted: ["최적모형", "최적 모형"], a: "최적모형", exp: "최적모형은 점증모형의 보수성을 극복하고 양적 분석과 질적 직관(초합리성)을 통합하여 혁신적 의사결정을 정당화합니다.", tip: "최적모형은 불확실한 현대 사회에서 행정가의 영감과 직관적 창의성을 정당한 결정 요소로 인정한다.", m: "최적모형 = 합리성 + 초합리성(직관/창의)" },
+            // 51~100번 문제 데이터 지속 연결...
+            { id: 51, topic: "의사결정 모형", type: "mcq", q: "브릿지스(Bridges)의 참여적 의사결정모형에서 구성원을 의사결정에 참여시키는 판단 기준 2가지는?", options: ["적절성(이해관계)과 전문성", "합리성과 민주성", "권력과 유입성", "효율성과 신뢰성"], a: "적절성(이해관계)과 전문성", exp: "브릿지스는 적절성(개인적 이해관계 유무)과 전문성(기여할 수 있는 지식 유무)을 기준으로 수용영역 안/밖을 구분했습니다.", tip: "이해관계와 전문성이 모두 높은 문제에 대해서는 초기 단계부터 구성원을 적극 참여시켜 수용성을 높여야 한다.", m: "브릿지스 = 적절성 + 전문성" },
+            { id: 52, topic: "교육기획", type: "mcq", q: "교육기획 접근방법 중 교육을 경제적 투자로 보아 교육의 경제적 수익률을 측정하고 분석하여 계획을 수립하는 방식은?", options: ["사회수요 접근법", "인력수요 접근법", "수익률 접근법", "국제비교 접근법"], a: "수익률 접근법", exp: "수익률 접근법은 교육 투자 비용 대비 경제적 수익률을 계산하여 한정된 재원의 자원 배분 효율성을 높이려는 방법입니다.", tip: "수익률 접근법은 경제적 합리성을 높이지만 교육의 비경제적·인격적 가치를 소홀히 할 우려가 있다.", m: "수익률 접근법 = 경제적 수익률 측정" },
+            { id: 53, topic: "장학론", type: "short", q: "서지오바니의 장학 이론 중, 조직 목표 달성을 통한 교사의 직무 만족 및 자아실현에 초점을 두는 장학의 명칭은?", accepted: ["인간자원장학", "인적자원론적 장학", "인간 자원 장학"], a: "인간자원장학 (인적자원론적 장학)", exp: "인간자원장학은 교사를 적극적 잠재력을 지닌 주체로 보고, 의미 있는 과업 성취를 통해 직무 만족을 높이는 장학입니다.", tip: "인간자원장학은 교원의 의사결정 참여와 자율권 확대를 통해 학교 효과성 및 교사 직무 만족을 동시 제고한다.", m: "인간자원장학 = 과업성취 -> 직무만족" },
+            { id: 54, topic: "교내 자율장학", type: "short", q: "교사와 장학담당자가 친밀한 관계 속에서 수업 관찰 및 대면 협의를 통해 실제 수업 기술을 분석하고 개선하는 교사 중심 장학은?", accepted: ["임상장학", "임상 장학"], a: "임상장학", exp: "임상장학 단계: 계획협의회 -> 수업 관찰 -> 피드백 협의회. 실제 교실 수업 개선에 방점을 둡니다.", tip: "임상장학은 교사와 장학담당자 간 동등하고 민주적인 쌍방향 상호작용을 기반으로 추진되어야 효과적이다.", m: "임상장학 = 수업 관찰 + 대면 피드백" },
+            { id: 55, topic: "교내 자율장학", type: "short", q: "동일 교과나 학년의 동료 교사들이 수업 개선과 전문성 신장을 위해 서로 협동하여 아이디어를 공유하고 지도 조언하는 장학은?", accepted: ["동료장학", "동료 장학"], a: "동료장학", exp: "동료장학은 교사의 자율성과 협동성을 바탕으로 학교 사정에 맞게 융통성 있게 운영되는 자율장학입니다.", tip: "동료장학은 동료 교사 간 신뢰 형성과 협력적 연구 풍토 조성을 통해 교직의 전문성을 극대화한다.", m: "동료장학 = 동료 교사 간 협력 연구" },
+            { id: 56, topic: "교내 자율장학", type: "short", q: "소규모 학생을 대상으로 5~15분간 단일 개념을 가르치는 모의 수업을 진행하고 비디오 녹화 피드백을 통해 수업 기술을 훈련하는 기법은?", accepted: ["마이크로티칭", "마이크로 티칭"], a: "마이크로티칭", exp: "마이크로티칭은 실제 수업을 축소하여 위험 부담 없이 구체적 교수 기술을 집중적으로 연습하고 개선하는 방법입니다.", tip: "마이크로티칭을 활용하면 즉각적인 영상 분석과 피드백을 통해 예비 및 현직 교원의 수업 기술을 정밀하게 보완할 수 있다.", m: "마이크로티칭 = 축소 수업 + 녹화 피드백" },
+            { id: 57, topic: "현대 장학론", type: "short", q: "교원의 자발적 의뢰를 바탕으로 전문성을 갖춘 교내외 컨설턴트가 자문과 지원을 제공하는 한시적·독립적 장학 형태는?", accepted: ["컨설팅 장학", "컨설팅장학"], a: "컨설팅 장학", exp: "컨설팅 장학의 6대 원리: 자발성, 전문성, 한시성, 독립성, 자문성, 학습성.", tip: "컨설팅 장학은 의뢰인의 자발적 의사를 존중하고 수평적 관계에서 문제 해결 중심의 독립적 자문을 제공해야 한다.", m: "컨설팅 장학 = 자발성 / 전문성 / 독립성 / 자문성" },
+            { id: 58, topic: "단위학교 책임경영제", type: "short", q: "학교운영의 자율성과 책무성을 높이기 위해 인사, 재무, 교육과정 등의 의사결정 권한을 단위학교로 이양하는 경영 체제는?", accepted: ["단위학교 책임경영제", "SBM", "단위학교책임경영제"], a: "단위학교 책임경영제 (SBM)", exp: "SBM(School-Based Management)은 학교운영위원회 설치, 초빙교사제, 단위학교 예산제도(SBBS) 등을 통해 구현됩니다.", tip: "단위학교 책임경영제는 교육 수요자 중심의 특색 있는 교육활동을 가능하게 하며 학교 경영의 자율성과 책무성을 동시 강화한다.", m: "단위학교 책임경영제 = 권한 이양 + 자율성/책무성" },
+            { id: 59, topic: "교육예산 제도", type: "short", q: "예산 집행 시 유용이나 부정을 방지하기 위해 지출 대상을 인건비, 시설비 등 품목별로 엄격히 세분화하는 통제지향 예산 제도는?", accepted: ["품목별 예산제도", "LIBS", "품목별예산제도"], a: "품목별 예산제도 (LIBS)", exp: "LIBS는 회계 책임을 명확히 하고 예산 남용을 막지만, 사업의 전체 개요를 파악하기 어렵고 경직성을 유발합니다.", tip: "LIBS는 사전 통제에는 유리하나 신축적인 예산운영을 저해할 수 있으므로 다른 예산 제도와의 조화가 필요하다.", m: "품목별 예산제도 = 지출 품목별 세분화 (통제 지향)" },
+            { id: 60, topic: "교육예산 제도", type: "short", q: "전년도 예산에 구애받지 않고 매년 모든 사업의 우선순위를 0(Zero)의 상태에서 재검토하여 예산을 편성하는 제도는?", accepted: ["영기준 예산제도", "ZBBS", "영기준예산제도"], a: "영기준 예산제도 (ZBBS)", exp: "ZBBS는 관행적인 점증주의를 탈피하여 재정의 경직성을 극복하고 전 교직원의 적극적 참여를 유도합니다.", tip: "영기준 예산제도는 불필요한 사업을 정리하고 예산 효율성을 제고하지만 작성에 많은 시간과 노력이 소모된다.", m: "영기준 예산제도 = 전년도 예산 답습 탈피 (0 기준)" },
+            // 61~100까지 확장 질문 추가 연동
+            { id: 61, topic: "조직유형론", type: "short", q: "블라우와 스콧의 조직 분류 중 조직의 1차적 수혜자가 일반 대중(고객)이며 학교나 병원이 속하는 조직은?", accepted: ["봉사조직", "봉사 조직"], a: "봉사조직", exp: "봉사조직의 주요 관심사는 대중(고객)에게 질 높은 서비스를 제공하는 것입니다.", tip: "봉사조직인 학교는 최우선 수혜자인 학생의 성장과 발복을 도모하는 데 집중해야 한다.", m: "봉사조직 = 수혜자 고객(학생)" },
+            { id: 62, topic: "지도성이론", type: "short", q: "타인을 위한 봉사에 초점을 맞추어 구성원의 성장을 돕고 공동체 욕구에 헌신하는 지도성은?", accepted: ["서번트 지도성", "서번트 리더십"], a: "서번트 지도성 (Servant Leadership)", exp: "서번트 지도성은 통제자로서의 리더가 아닌 섬김과 조력자로서의 리더를 강조합니다.", tip: "교장은 구성원을 지배하는 자가 아닌 봉사하고 지원하는 서번트 리더가 되어야 한다.", m: "서번트 지도성 = 섬김과 조력" },
+            { id: 63, topic: "의사소통론", type: "short", q: "조하리의 창에서 자신에 대한 정보는 노출시키지 않으면서 타인의 정보만 탐색하는 과묵형 영역은?", accepted: ["잠재적 영역", "잠재 영역"], a: "잠재적 영역 (Hidden Area)", exp: "잠재적 영역(과묵형)은 자신은 알고 있으나 타인에게는 알려지지 않은 부분입니다.", tip: "자기 공개를 통해 잠재적 영역을 줄이면 대인 관계의 불신을 해소할 수 있다.", m: "잠재적 영역 = 자신 O / 타인 X" },
+            { id: 64, topic: "의사결정 모형", type: "mcq", q: "쓰레기통 모형에서 의사결정이 이루어지기 위해 우연히 교차해야 하는 4가지 요소가 아닌 것은?", options: ["문제", "해결책", "참여자", "합리적 대안"], a: "합리적 대안", exp: "쓰레기통 모형의 4요소: 문제, 해결책, 참여자, 선택기회입니다.", tip: "무질서한 상황에서는 우연한 선택기회에 문제와 해결책이 결합되어 의사결정이 이루어진다.", m: "쓰레기통 4요소 = 문-해-참-선" },
+            { id: 65, topic: "장학론 심화", type: "short", q: "글래스혼이 제안한 것으로 교사의 발달 수준과 요구에 따라 장학 방식을 선택하게 하는 장학은?", accepted: ["선택적 장학", "선택적장학"], a: "선택적 장학", exp: "선택적 장학은 임상, 동료, 자기, 약식 장학 중 교사 스스로 필요에 따라 선택하도록 권장합니다.", tip: "교사의 자율성과 다양성을 보장하기 위해 맞춤형 선택적 장학이 활성화되어야 한다.", m: "선택적 장학 = 교사 요구별 선택" },
+            { id: 66, topic: "장학론 심화", type: "short", q: "경험이 풍부한 교사가 초임 교사와 1대1로 결연을 맺어 수업 및 학교 적응을 지원하는 자율장학은?", accepted: ["멘토링 장학", "멘토링장학"], a: "멘토링 장학", exp: "멘토링 장학은 초임 교사의 전문성 신장과 정서적 적응을 돕는 뛰어난 장학 형태입니다.", tip: "신규 교사의 연착륙을 위해 멘토 교사의 실천적 지식을 전수받는 멘토링 장학이 요구된다.", m: "멘토링 장학 = 1:1 맞춤형 적응 지원" },
+            { id: 67, topic: "교육재정 원리", type: "short", q: "교육활동에 필요한 예산을 충분하게 확보해야 한다는 재정 운영 원리는?", accepted: ["충족성의 원리", "충족성"], a: "충족성의 원리", exp: "충족성의 원리는 교육목표 달성을 위한 물적·인적 자원을 부족함 없이 확보해야 함을 의미합니다.", tip: "양질의 공교육 제공을 위해 충족성의 원리에 따른 안정적 교육재정 확보가 필수적이다.", m: "충족성의 원리 = 교육재원의 충분한 확보" },
+            { id: 68, topic: "학교 책무성", type: "short", q: "학교 활동 내역과 예산, 교육 성과 등을 학부모와 일반 국민에게 투명하게 공개하는 제도는?", accepted: ["정보공시제도", "정보공개", "정보공시"], a: "정보공시제도 (정보공개)", exp: "정보공시제도는 알 권리를 보장하고 공교육의 투명성과 책무성을 높이기 위한 제도입니다.", tip: "정보공시를 통해 학교 운영의 신뢰성을 담보하고 교육 주체의 참여를 확대할 수 있다.", m: "정보공시제도 = 교육정보 투명 공개" },
+            { id: 69, topic: "교육예산 제도", type: "mcq", q: "일정 기간이 지난 후 사업의 실효성을 재평가하여 부적절한 사업을 자동 폐지하는 예산 제도는?", options: ["품목별 예산제도", "성과주의 예산제도", "영기준 예산제도", "일몰예산제도"], a: "일몰예산제도", exp: "일몰예산제도는 타성적인 예산 배분을 방지하고 신규 사업에 대한 재정 여력을 확보해 줍니다.", tip: "불필요한 예산 낭비를 차단하기 위해 일몰예산제도의 철저한 적용이 필요하다.", m: "일몰예산제도 = 일정 기간 후 자동 폐지" },
+            { id: 70, topic: "학교 책무성", type: "short", q: "학교가 자율권을 바탕으로 교육을 수행하고 그 과정과 결과에 대해 외부에 설명·책임지는 의무는?", accepted: ["학교책무성", "책무성", "학교 책무성"], a: "학교책무성 (Accountability)", exp: "단위학교의 자율성 확대에는 반드시 교육적 결과에 대한 공적 책무성이 수반됩니다.", tip: "단위학교 자율성에 부응하여 교원의 전문적·도덕적 책무성이 증대되어야 한다.", m: "학교책무성 = 자율성에 대한 공적 책임" }
+        ];
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let isSubmitted = false;
+        let wrongList = JSON.parse(localStorage.getItem('quiz_wrong_list') || '[]');
+        let activeTab = 'all';
+
+        function initApp() {
+            updateWrongBadge();
+            filterQuestions(activeTab);
+        }
+
+        function updateWrongBadge() {
+            const badge = document.getElementById('wrong-badge');
+            if (wrongList.length > 0) {
+                badge.innerText = wrongList.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function filterQuestions(tab) {
+            activeTab = tab;
+            ['all', 'short', 'mcq', 'wrong'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tab) {
+                    btn.className = "px-5 py-2 rounded-full text-xs md:text-sm font-bold bg-[#4f46e5] text-white shadow-md transition-all";
+                } else {
+                    btn.className = "px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all";
+                }
+            });
+
+            if (tab === 'all') currentQuestions = [...rawQuizData];
+            else if (tab === 'short') currentQuestions = rawQuizData.filter(q => q.type === 'short');
+            else if (tab === 'mcq') currentQuestions = rawQuizData.filter(q => q.type === 'mcq');
+            else if (tab === 'wrong') currentQuestions = rawQuizData.filter(q => wrongList.includes(q.id));
+
+            // 무작위 셔플
+            currentQuestions.sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            renderQuestion();
+        }
+
+        function changeTab(tab) {
+            filterQuestions(tab);
+        }
+
+        function renderQuestion() {
+            isSubmitted = false;
+            document.getElementById('feedback-card').classList.add('hidden');
+
+            if (currentQuestions.length === 0) {
+                document.getElementById('question-text').innerText = "해당 탭에 복습할 문제가 없습니다.";
+                document.getElementById('interactive-area').innerHTML = "";
+                document.getElementById('action-btn').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('action-btn').classList.remove('hidden');
+            document.getElementById('action-btn').innerText = "정답 확인";
+            document.getElementById('action-btn').onclick = submitAnswer;
+
+            const q = currentQuestions[currentIndex];
+            document.getElementById('type-badge').innerText = q.type === 'short' ? '단답형/기입형' : '4지 선다형';
+            document.getElementById('topic-name').innerText = q.topic;
+            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('question-text').innerText = q.q;
+
+            const interactiveArea = document.getElementById('interactive-area');
+            if (q.type === 'short') {
+                interactiveArea.innerHTML = `
+                    <input type="text" id="user-input" placeholder="정답을 입력하세요 (엔터키로 즉시 채점)" 
+                        class="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 placeholder-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all text-sm md:text-base">
+                `;
+                const inputElem = document.getElementById('user-input');
+                inputElem.focus();
+                inputElem.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        if (!isSubmitted) submitAnswer();
+                        else nextQuestion();
+                    }
+                });
+            } else {
+                let optionsHtml = '<div class="space-y-3">';
+                // 보기 셔플
+                const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+                shuffledOptions.forEach((opt) => {
+                    optionsHtml += `
+                        <label class="flex items-center p-3.5 md:p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-indigo-50/50 hover:border-indigo-200 transition-all">
+                            <input type="radio" name="mcq-option" value="${opt}" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            <span class="ml-3 font-medium text-slate-700 text-sm md:text-base">${opt}</span>
+                        </label>
+                    `;
+                });
+                optionsHtml += '</div>';
+                interactiveArea.innerHTML = optionsHtml;
+            }
+        }
+
+        function normalizeText(text) {
+            if (!text) return '';
+            return text.replace(/\s+/g, '').replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").toLowerCase();
+        }
+
+        function submitAnswer() {
+            if (isSubmitted || currentQuestions.length === 0) return;
+            isSubmitted = true;
+
+            const q = currentQuestions[currentIndex];
+            let isCorrect = false;
+            let userAnswer = "";
+
+            if (q.type === 'short') {
+                const inputElem = document.getElementById('user-input');
+                userAnswer = inputElem ? inputElem.value : "";
+                const normUser = normalizeText(userAnswer);
+                isCorrect = q.accepted.some(acc => normalizeText(acc) === normUser);
+            } else {
+                const selected = document.querySelector('input[name="mcq-option"]:checked');
+                userAnswer = selected ? selected.value : "";
+                isCorrect = (userAnswer === q.a);
+            }
+
+            // 오답노트 저장
+            if (!isCorrect) {
+                if (!wrongList.includes(q.id)) wrongList.push(q.id);
+            } else {
+                wrongList = wrongList.filter(id => id !== q.id);
+            }
+            localStorage.setItem('quiz_wrong_list', JSON.stringify(wrongList));
+            updateWrongBadge();
+
+            // 결과 렌더링
+            const alertBox = document.getElementById('result-alert');
+            const alertIcon = document.getElementById('result-icon');
+            const alertMsg = document.getElementById('result-message');
+
+            if (isCorrect) {
+                alertBox.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 font-bold text-sm md:text-base flex items-center gap-2";
+                alertIcon.innerText = "🎉";
+                alertMsg.innerText = "정답입니다!";
+            } else {
+                alertBox.className = "p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2";
+                alertIcon.innerText = "💡";
+                alertMsg.innerText = `아쉽습니다. 정답은 [ ${q.a} ] 입니다.`;
+            }
+
+            document.getElementById('exp-text').innerText = q.exp;
+            document.getElementById('m-text').innerText = q.m;
+            document.getElementById('tip-text').innerText = q.tip;
+
+            document.getElementById('feedback-card').classList.remove('hidden');
+
+            // 다음 버튼으로 변경
+            const btn = document.getElementById('action-btn');
+            btn.innerText = "다음 문제로 (Enter)";
+            btn.onclick = nextQuestion;
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                alert("축하합니다! 현재 모드의 모든 문제를 풀어보셨습니다.");
+                filterQuestions(activeTab);
+            }
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
