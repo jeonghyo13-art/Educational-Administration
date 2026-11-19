@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>임용고시 교육학 마스터: 교육행정 150제 (5세트)</title>
-    <!-- Tailwind CSS CDN -->
+    <title>임용고시 교육학 마스터: 교육행정 150제</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            background-color: #f8fafc; 
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
         }
-        .glass-card { 
-            background: #ffffff; 
-            border-radius: 1.5rem; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03); 
-            border: 1px solid #f1f5f9; 
+        .set-card {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .set-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(79, 70, 229, 0.08);
+            border-color: #e0e7ff;
         }
         .option-label:has(input:checked) {
             background-color: #eef2ff;
@@ -25,113 +31,188 @@
         }
     </style>
 </head>
-<body class="min-h-screen py-8 px-4 text-slate-800 flex justify-center items-start">
+<body class="min-h-screen py-10 px-4 md:px-6 flex flex-col items-center">
 
-    <div class="max-w-3xl w-full">
-        <!-- 메인 헤더 -->
-        <header class="text-center mb-6">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-[#3b30d8] tracking-tight mb-2">
-                임용고시 교육학 마스터: 교육행정 편
+    <div class="max-w-4xl w-full">
+        <!-- 상단 헤더 영역 -->
+        <header class="text-center mb-8">
+            <div class="inline-block px-3.5 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-[#4f46e5] text-[11px] font-bold tracking-tight mb-3">
+                SANTA 파이널 전 범위 · 2026 트렌드 완결판
+            </div>
+            <h1 class="text-2xl md:text-[32px] font-extrabold text-slate-900 tracking-tight mb-2">
+                임용고시 교육학 마스터: 교육행정 150제
             </h1>
             <p class="text-xs md:text-sm font-medium text-slate-500">
-                총 150문항 5세트 순환 출제 · 새로고침 시 새로운 세트 전환 · 보기 100% 무작위 셔플
+                30문항 × 5개 세트 구성 · 매 시작 및 새로고침 시 문항과 4지선다 보기가 자동 셔플됩니다
             </p>
         </header>
 
-        <!-- 상단 탭 네비게이션 -->
-        <div class="flex justify-center items-center gap-2 mb-6 flex-wrap">
-            <button onclick="changeTab('set')" id="tab-set" class="px-5 py-2 rounded-full text-xs md:text-sm font-bold bg-[#4f46e5] text-white shadow-md transition-all">
-                오늘의 세트 (<span id="set-indicator">SET 1</span>)
+        <!-- 상단 Pill 내비게이션 바 -->
+        <nav class="flex justify-center items-center gap-2 mb-10 flex-wrap">
+            <button onclick="showHome()" id="nav-home" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-bold bg-[#4f46e5] text-white shadow-sm flex items-center gap-1.5 transition-all">
+                <span>🗂️</span> 전체 세트 목록
             </button>
-            <button onclick="changeTab('all')" id="tab-all" class="px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all">
-                전체 150제 도전
+            <button onclick="startSet(1)" id="nav-set-1" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
+                1세트 (30제)
             </button>
-            <button onclick="nextManualSet()" class="px-4 py-2 rounded-full text-xs md:text-sm font-bold bg-indigo-50 text-[#4338ca] hover:bg-indigo-100 border border-indigo-200 transition-all">
-                🔄 다음 세트 변경
+            <button onclick="startSet(2)" id="nav-set-2" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
+                2세트 (30제)
             </button>
-            <button onclick="changeTab('wrong')" id="tab-wrong" class="relative px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all">
+            <button onclick="startSet(3)" id="nav-set-3" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
+                3세트 (30제)
+            </button>
+            <button onclick="startSet(4)" id="nav-set-4" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
+                4세트 (30제)
+            </button>
+            <button onclick="startSet(5)" id="nav-set-5" class="px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
+                5세트 (30제)
+            </button>
+            <button onclick="startWrongNote()" id="nav-wrong" class="relative px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
                 오답 노트
-                <span id="wrong-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-extrabold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
+                <span id="wrong-badge" class="hidden absolute -top-1.5 -right-1 bg-red-500 text-white text-[10px] font-extrabold w-4 h-4 flex items-center justify-center rounded-full">0</span>
             </button>
-        </div>
+        </nav>
 
-        <!-- 알림 배너 (alert 대체용 메시지 박스) -->
-        <div id="toast-banner" class="hidden mb-4 p-4 rounded-2xl bg-indigo-600 text-white text-sm font-bold text-center shadow-lg transition-all">
-            알림 메시지
-        </div>
+        <!-- 알림 배너 -->
+        <div id="toast-banner" class="hidden mb-6 p-3.5 rounded-xl bg-slate-900 text-white text-xs md:text-sm font-bold text-center shadow-lg transition-all"></div>
 
-        <!-- 퀴즈 영역 -->
-        <div class="glass-card p-6 md:p-10">
-            <!-- 퀴즈 상단 메타 정보 -->
-            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2">
-                    <span id="set-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#e0e7ff] text-[#4338ca]">
-                        SET 1 (30문항)
-                    </span>
-                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-                        4지 선다 객관식
-                    </span>
+        <!-- =================================================================== -->
+        <!-- VIEW 1: 전체 세트 목록 대시보드 (첨부 이미지와 동일한 2열 그리드) -->
+        <!-- =================================================================== -->
+        <section id="home-view" class="w-full">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-5 px-1">
+                <div>
+                    <h2 class="text-lg md:text-xl font-extrabold text-slate-900">학습할 모의고사 세트를 선택하세요</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">총 150문항이 주제별 5개 세트(각 30문항)로 체계적으로 구성되어 있습니다.</p>
                 </div>
-                <div class="flex items-center gap-3 text-xs md:text-sm font-bold text-slate-600">
-                    <span id="topic-name" class="text-slate-400 font-medium">교육행정의 원리</span>
-                    <span id="progress-text" class="text-[#3b30d8] font-bold">1 / 30</span>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50/80 border border-indigo-100 text-[#4f46e5] text-[11px] font-bold self-start sm:self-auto">
+                    <span>🔀</span> 보기 순서 100% 무작위 재배치 적용
                 </div>
             </div>
 
-            <!-- 메인 질문 -->
-            <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-900 leading-snug mb-8">
-                문제를 불러오는 중입니다...
-            </h2>
+            <!-- 5개 세트 카드 그리드 -->
+            <div id="set-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- JS로 동적 렌더링 -->
+            </div>
+        </section>
 
-            <!-- 객관식 보기 영역 -->
-            <div id="interactive-area" class="mb-6"></div>
-
-            <!-- 제출 및 다음 버튼 -->
-            <button id="action-btn" onclick="submitAnswer()" class="w-full py-3.5 rounded-xl font-bold text-white bg-[#4338ca] hover:bg-[#3730a3] shadow-md transition-all text-sm md:text-base">
-                정답 확인
-            </button>
-
-            <!-- 피드백 박스 (제출 완료 후 표시) -->
-            <div id="feedback-card" class="mt-6 space-y-4 hidden">
-                <!-- 결과 안내 박스 -->
-                <div id="result-alert" class="p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2">
-                    <span id="result-icon">💡</span>
-                    <span id="result-message">아쉽습니다. 정답은 [ ... ] 입니다.</span>
+        <!-- =================================================================== -->
+        <!-- VIEW 2: 실전 퀴즈 풀이 화면 -->
+        <!-- =================================================================== -->
+        <section id="quiz-view" class="hidden w-full">
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 md:p-10">
+                <!-- 상단 메타 정보 -->
+                <div class="flex justify-between items-center pb-4 mb-6 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span id="quiz-set-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-[#4f46e5]">
+                            SET 01 · 30문항
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500">
+                            객관식 4지선다
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-2.5 text-xs md:text-sm font-bold">
+                        <span id="quiz-topic" class="text-slate-400 font-medium">교육행정의 개념</span>
+                        <span id="quiz-progress" class="text-[#4f46e5] font-extrabold">1 / 30</span>
+                    </div>
                 </div>
 
-                <!-- 개념 해설 -->
-                <div class="p-4 md:p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-                    <div class="flex items-center gap-2 font-bold text-[#4338ca] text-xs md:text-sm mb-1">
-                        <span>💡</span> 개념 해설
+                <!-- 문항 질문 -->
+                <h2 id="quiz-question" class="text-lg md:text-xl font-bold text-slate-900 leading-relaxed mb-8">
+                    문항 로딩 중...
+                </h2>
+
+                <!-- 4지선다 보기 영역 -->
+                <div id="quiz-options" class="space-y-3 mb-7"></div>
+
+                <!-- 정답 확인 / 다음 문제 버튼 -->
+                <button id="quiz-action-btn" onclick="submitAnswer()" class="w-full py-3.5 rounded-xl font-bold text-white bg-[#4f46e5] hover:bg-[#4338ca] shadow-sm transition-all text-sm md:text-base">
+                    정답 확인
+                </button>
+
+                <!-- 4단계 논술형 피드백 박스 -->
+                <div id="feedback-box" class="hidden mt-6 space-y-3.5">
+                    <div id="result-banner" class="p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2">
+                        <span id="result-icon">💡</span>
+                        <span id="result-msg">아쉽습니다. 정답은 [ ... ] 입니다.</span>
                     </div>
-                    <p id="exp-text" class="text-slate-600 text-xs md:text-sm leading-relaxed font-normal"></p>
+
+                    <div class="p-4 md:p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                        <div class="text-xs md:text-sm font-bold text-[#4f46e5] mb-1">💡 개념 해설</div>
+                        <p id="fb-exp" class="text-xs md:text-sm text-slate-600 leading-relaxed"></p>
+                    </div>
+
+                    <div class="p-4 md:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+                        <div class="text-xs md:text-sm font-bold text-[#4f46e5] mb-1">🧠 암기 키워드 & 두문자</div>
+                        <p id="fb-m" class="text-xs md:text-sm text-[#312e81] font-semibold leading-relaxed"></p>
+                    </div>
+
+                    <div class="p-4 md:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/70">
+                        <div class="text-xs md:text-sm font-bold text-amber-700 mb-1">✍️ 실전 논술 모범 문장</div>
+                        <p id="fb-tip" class="text-xs md:text-sm text-amber-900 font-medium leading-relaxed"></p>
+                    </div>
                 </div>
 
-                <!-- 암기 키워드 & 두문자 -->
-                <div class="p-4 md:p-5 rounded-2xl bg-indigo-50/60 border border-indigo-100/80 space-y-1">
-                    <div class="flex items-center gap-2 font-bold text-[#4338ca] text-xs md:text-sm mb-1">
-                        <span>🧠</span> 암기 키워드 & 두문자
-                    </div>
-                    <p id="m-text" class="text-[#3730a3] text-xs md:text-sm font-semibold leading-relaxed"></p>
-                </div>
-
-                <!-- 실전 논술 모범 문장 -->
-                <div class="p-4 md:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/60 space-y-1">
-                    <div class="flex items-center gap-2 font-bold text-amber-700 text-xs md:text-sm mb-1">
-                        <span>✍️</span> 실전 논술 모범 문장
-                    </div>
-                    <p id="tip-text" class="text-amber-900 text-xs md:text-sm font-medium leading-relaxed"></p>
+                <!-- 하단 목록 복귀 링크 -->
+                <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <button onclick="showHome()" class="text-xs font-bold text-slate-400 hover:text-slate-700 transition-colors">
+                        ← 전체 세트 목록으로 돌아가기
+                    </button>
+                    <button onclick="reshuffleCurrentRound()" class="text-xs font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                        🔀 현재 세트 다시 섞기
+                    </button>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <script>
         // =========================================================================
-        // 1. 전 범위 150문항 객관식 데이터베이스 (각 30문항씩 5개 세트 구성)
+        // 1. 5개 세트 메타 정보 (대시보드 카드 구성용)
+        // =========================================================================
+        const setMetaInfo = [
+            {
+                set: 1,
+                badge: "SET 01 · 30문항",
+                badgeStyle: "bg-indigo-50 text-[#4f46e5]",
+                title: "제1세트: 교육행정 기초 · 고전이론 · 체제 및 조직유형",
+                keywords: "국가공권설 vs 조건정비설, 과학적 관리론·관료제, 인간관계론, 겟젤스·구바, 호이·미스켈, 파슨스·칼슨·민츠버그·에치오니·홀"
+            },
+            {
+                set: 2,
+                badge: "SET 02 · 30문항",
+                badgeStyle: "bg-sky-50 text-sky-600",
+                title: "제2세트: 조직풍토 · 학교문화 · 갈등관리 · 동기 및 지도성",
+                keywords: "할핀·크로프트, 호이·미스켈 풍토, 리커트, 맥그리거·아지리스, 토마스 갈등관리, MBO·PERT·TQM·OD, 매슬로우·허즈버그·ERG·브룸·피들러·변혁적 지도성"
+            },
+            {
+                set: 3,
+                badge: "SET 03 · 30문항",
+                badgeStyle: "bg-purple-50 text-purple-600",
+                title: "제3세트: 대안적 지도성 · 의사소통 · 의사결정 · 기획 및 장학",
+                keywords: "감성·교육·민주·서번트 지도성, 조하리의 창, 합리·만족·점증·혼합·최적·쓰레기통 모형, 브릿지스·호이&타터, 교육기획, 임상·동료·자기·컨설팅·멘토링 장학"
+            },
+            {
+                set: 4,
+                badge: "SET 04 · 30문항",
+                badgeStyle: "bg-emerald-50 text-emerald-600",
+                title: "제4세트: 교육재정 · 단위학교책임경영 · 예산제도 · 학교책무성",
+                keywords: "교육재정 운영 4단계(확배지평), 단위학교 책임경영제(SBM), 학교운영위원회, 학교회계제도, LIBS·PBS·PPBS·ZBBS·일몰예산, 학교평가·감사·교원능력개발평가"
+            },
+            {
+                set: 5,
+                badge: "SET 05 · 30문항",
+                badgeStyle: "bg-amber-50 text-amber-600",
+                title: "제5세트: 교육행정 전 범위 고난도 통합 · 비교 · 실전 적용",
+                keywords: "고전·행동·체제이론 심화 비교, 조직유형론 종합, 상황적 지도성 vs 변혁적 지도성, 참여적 의사결정 기준 통합, 장학 유형·예산제도 한계점 심층 분석"
+            }
+        ];
+
+        // =========================================================================
+        // 2. 전 범위 150문항 객관식 문제 은행 (각 30문항 × 5세트)
         // =========================================================================
         const rawQuizData = [
-            // ================= [SET 1: 1 ~ 30] 교육행정 개념·원리·고전·체제·조직유형 =================
+            // ================= [SET 1: 1 ~ 30] =================
             { id: 1, set: 1, topic: "교육행정의 개념", q: "국가의 통치권 작용으로 교육을 지도·감독·통제하는 중앙집권적 교육행정 관점은?", options: ["국가공권설(국가통치설)", "조건정비설(기능주의설)", "성장지원론(학습조장설)", "협동행위론(경영론)"], a: "국가공권설(국가통치설)", exp: "국가공권설은 '교육에 관한 행정'으로 상의하달(Top-down)식 통제와 감독을 강조합니다.", tip: "국가공권설은 교육의 자주성과 중립성을 저해할 우려가 있으므로 조건정비적 행정으로 전환되어야 한다.", m: "국가공권설 = 교육에 관한 행정 / 통제·감독" },
             { id: 2, set: 1, topic: "교육행정의 개념", q: "교육의 자주성을 존중하며 교수-학습에 필요한 인적·물적 환경을 정비하고 지원하는 민주적 행정 관점은?", options: ["조건정비설(기능주의설)", "국가공권설(국가통치설)", "행정과정론", "교육지도성론"], a: "조건정비설(기능주의설)", exp: "조건정비설은 '교육을 위한 행정'으로서 교육목적 달성을 돕는 수단적·봉사적 활동을 중시합니다.", tip: "교육행정은 교원의 전문성을 존중하고 교육활동을 지원하는 조건정비설의 관점에서 운영되어야 한다.", m: "조건정비설 = 교육을 위한 행정 / 지원·봉사" },
             { id: 3, set: 1, topic: "교육행정의 개념", q: "궁극적 지향점을 학습자의 학습활동에 두고 학습동기를 유발하여 성장을 촉진하는 최신 교육행정 개념은?", options: ["성장지원론(학습조장설)", "행정과정론", "협동행위론", "국가공권설"], a: "성장지원론(학습조장설)", exp: "성장지원론은 학습주체(학생)와 학습활동 자체를 가장 중시하며 자발적 성장을 조장합니다.", tip: "성장지원론에 입각하여 학교 행정은 학생의 주도적 배움을 촉진하는 학습 환경 조성에 주력해야 한다.", m: "성장지원론 = 학습자 학습활동 중심" },
@@ -163,7 +244,7 @@
             { id: 29, set: 1, topic: "리커트 관리체제", q: "리커트(Likert)의 관리체제 4유형 중 가장 이상적인 학교풍토로 맥그리거의 Y이론과 연결되는 체제는?", options: ["체제 4: 참여적 풍토", "체제 1: 이기적 권위주의적 풍토", "체제 2: 자선적 권위주의적 풍토", "체제 3: 협의적 풍토"], a: "체제 4: 참여적 풍토", exp: "리커트(이자협침): 체제1(이기적 권위) → 체제2(자선적 권위) → 체제3(협의적) → 체제4(참여적 풍토).", tip: "학교 경영자는 구성원을 온전히 신뢰하고 의사결정 권한을 공유하는 리커트의 체제 4(참여적 풍토)를 구현해야 한다.", m: "이자협침 = 체제4 참여적 풍토(Y이론)" },
             { id: 30, set: 1, topic: "맥그리거 X-Y이론", q: "맥그리거(McGregor)의 Y이론적 인간관에 기반한 학교 행정가의 경영 전략으로 가장 적절한 것은?", options: ["구성원이 자율적 통제와 자기지향을 발휘하도록 조직 조건을 정비한다.", "외적 통제와 엄격한 상벌 규정을 통해 교사를 감독한다.", "인간은 본래 수동적이므로 세세한 지침을 하달한다.", "온정적 회유를 통해 불만을 무마하는 데 주력한다."], a: "구성원이 자율적 통제와 자기지향을 발휘하도록 조직 조건을 정비한다.", exp: "Y이론은 인간이 책임감과 잠재력을 지녔다고 보므로 자율적 통제와 내적 동기를 촉진하는 환경 정비를 강조합니다.", tip: "Y이론에 근거하여 교원을 자율적이고 책임감 있는 전문가로 신뢰하고 자발적 역량을 발휘할 수 있는 여건을 조성해야 한다.", m: "Y이론 = 자율적 통제 / 지원적 조건 정비" },
 
-            // ================= [SET 2: 31 ~ 60] 문화론·갈등론·관리기법·동기이론 =================
+            // ================= [SET 2: 31 ~ 60] =================
             { id: 31, set: 2, topic: "아지리스 이론", q: "아지리스(Argyris)의 미성숙-성숙 이론에 따를 때, 관료적 가치체계가 조직 구성원에게 미치는 영향으로 옳은 것은?", options: ["구성원을 수동적이고 의존적인 미성숙 상태로 고착시킨다.", "집단 간 협동과 융통성을 증대시킨다.", "개인의 자아실현 욕구와 조직 목표를 통합한다.", "구성원의 대인관계 능력과 문제해결력을 높인다."], a: "구성원을 수동적이고 의존적인 미성숙 상태로 고착시킨다.", exp: "관료적 가치체계는 X이론에 기반하여 구성원을 통제하므로 성숙한 자아실현을 가로막고 조직 효과성을 저하시킵니다.", tip: "아지리스의 이론에 따라 구성원에게 자율성과 신뢰를 부여하는 인간적 가치체계를 구축하여 개인과 조직의 동반 성장을 꾀해야 한다.", m: "관료적 가치 = 미성숙 고착 / 인간적 가치 = 성숙·성장" },
             { id: 32, set: 2, topic: "학교문화 유형론", q: "스타인호프와 오웬스(Steinhoff & Owens)의 학교문화 유형 중 '교장의 훌륭한 지도 아래 탁월하고 멋진 가르침을 추구하는 문화'는?", options: ["공연문화", "가족문화", "기계문화", "공포문화"], a: "공연문화", exp: "공연문화는 교장의 리더십 아래 교사들이 자부심을 가지고 훌륭한 수업(공연)을 펼치며 외부의 인정을 중시하는 문화입니다.", tip: "학교는 구성원 간 따뜻한 유대를 바탕으로 탁월한 교수학습을 추구하는 가족문화와 공연문화를 조화롭게 형성해야 한다.", m: "스타인호프·오웬스 = 가·기·공·공(공연=탁월한 가르침)" },
             { id: 33, set: 2, topic: "학교문화 유형론", q: "하그리브스(Hargreaves)의 학교문화 유형 중 '도구적 압력(성과)은 낮고 표현적 압력(친밀감)은 높아 친구 같은 관계가 강조되는 문화'는?", options: ["복지주의자 학교문화", "형식적 학교문화", "온실 학교문화", "생존주의자 학교문화"], a: "복지주의자 학교문화", exp: "복지주의자 문화는 편안하고 허용적인 분위기가 강하지만 학업 성취나 목표 달성에 대한 압력이 약한 특징이 있습니다.", tip: "복지주의자 문화의 안이함을 경계하고 높은 학업 기대와 따뜻한 지원이 균형을 이루는 효과적 학교문화를 지향해야 한다.", m: "복지주의자 = 도구↓, 표현↑ (편안·허용적)" },
@@ -195,7 +276,7 @@
             { id: 59, set: 2, topic: "도덕적·문화적 지도성", q: "서지오바니(Sergiovanni)가 제시한 학교 리더십 중 '성공보다 도덕적 선의(Goodness)를 중시하며 학교를 가치 공동체로 이끄는 지도성'은?", options: ["도덕적 지도성", "기술적 지도성", "거래적 지도성", "과업지향적 지도성"], a: "도덕적 지도성", exp: "서지오바니는 교육행정을 도덕적 기술로 보았으며, 도덕적 권위와 구성원의 자율성을 결합한 도덕적 지도성을 강조했습니다.", tip: "도덕적 지도성을 바탕으로 학교 구성원들이 공유된 교육적 가치와 윤리적 책무성을 내면화하도록 이끌어야 한다.", m: "서지오바니 = 도덕적 지도성(선의 중시) / 문화적 지도성" },
             { id: 60, set: 2, topic: "서지오바니 5대 지도성", q: "서지오바니의 5가지 학교 리더십 유형 중 '우수한 지도성(문화적·상징적)'이 아닌 '유능한 지도성'에 속하는 3가지는?", options: ["기술적, 인간적, 교육적 리더십", "문화적, 상징적, 변혁적 리더십", "카리스마적, 서번트, 감성적 리더십", "지시적, 지원적, 위임적 리더십"], a: "기술적, 인간적, 교육적 리더십", exp: "서지오바니(문상교인기): 기본적·유능한 지도성(기술적·인간적·교육적) 위에 탁월한·우수한 지도성(상징적·문화적)이 더해집니다.", tip: "학교장은 기술적·인간적·교육적 역량을 토대로 학교의 비전과 문화를 창출하는 상징적·문화적 리더십까지 발휘해야 한다.", m: "문상(우수한 지도성) / 교인기(유능한 지도성)" },
 
-            // ================= [SET 3: 61 ~ 90] 감성·교육·민주 지도성·의사소통·의사결정모형 =================
+            // ================= [SET 3: 61 ~ 90] =================
             { id: 61, set: 3, topic: "감성 지도성", q: "골만(Goleman)의 감성 지도성(Emotional Leadership)에서 강조하는 핵심 요소로 가장 적절한 것은?", options: ["지도자의 자기인식·자기관리 능력과 구성원 감성에 대한 공감 및 배려", "엄격한 규칙 적용과 객관적 성과 측정", "학부모와 지역사회의 외부 통제 강화", "교원의 승진 점수 산정 기준의 세분화"], a: "지도자의 자기인식·자기관리 능력과 구성원 감성에 대한 공감 및 배려", exp: "감성 지도성은 구성원의 정서와 욕구를 세심하게 배려하여 조직 전체의 감성 역량과 협력을 높이는 리더십입니다.", tip: "감성 지도성을 발휘하여 교직원의 정서적 소진을 예방하고 상호 공감과 신뢰가 흐르는 따뜻한 학교 풍토를 조성해야 한다.", m: "골만 감성 지도성 = 자기인식 + 공감·배려" },
             { id: 62, set: 3, topic: "교육 지도성", q: "서지오바니의 '교육 지도성(Educational Leadership)'에서 교육자에게 요청되는 핵심 기술의 성격을 무엇이라 부르는가?", options: ["인격화된 기술", "표준화된 공학 기술", "행정 통제 기술", "계량 분석 기술"], a: "인격화된 기술", exp: "교육 지도성은 사람에 대한 사랑과 앎의 가치에 대한 존중이 결합된 '인격화된 기술'을 통해 학습 공동체를 만듭니다.", tip: "교사는 자기 학습에 철저하고 학생에 대한 사랑을 담은 인격화된 기술을 발휘하여 진정한 교육 지도성을 실천해야 한다.", m: "교육 지도성 = 인격화된 기술 / 학습 공동체 구축" },
             { id: 63, set: 3, topic: "민주적 지도성", q: "민주적 지도성(Democratic Leadership)의 등장 배경 및 특징으로 옳지 않은 것은?", options: ["구성원을 단순한 생산성 향상의 도구로 취급하며 수단적 참여만 요구한다.", "분산적 리더십의 탈정치화·수단화 한계를 비판하며 등장하였다.", "리피트와 화이트의 분류 중 권위형과 자유방임형의 중간적 형태이다.", "구성원 모두를 윤리적 존재로 존중하고 합의를 통한 의사결정을 지향한다."], a: "구성원을 단순한 생산성 향상의 도구로 취급하며 수단적 참여만 요구한다.", exp: "민주적 지도성은 구성원의 참여를 수단이 아닌 윤리적 권리로 존중하며 자율과 합의를 중시합니다.", tip: "민주적 지도성을 신장하기 위해 모든 방침을 교직원의 참여와 합의로 결정하고 자유로운 의사소통 문화를 확립해야 한다.", m: "민주적 지도성 = 윤리적 권리 존중 / 합의와 자율" },
@@ -227,7 +308,7 @@
             { id: 89, set: 3, topic: "멘토링 장학", q: "초임 교사에게 '멘토링 장학'이 특히 필요한 이유로 가장 거리가 먼 것은?", options: ["초임 교사의 근무성적평정 점수를 상향 조정하기 위해서", "경력 교사의 실천적 조언을 통해 수업 전문성을 함양하기 위해서", "정서적·심리적 안정을 얻어 학교 문화에 원만히 적응하도록 돕기 위해서", "학급경영 및 생활지도 등 다양한 문제 상황 대처 능력을 기르기 위해서"], a: "초임 교사의 근무성적평정 점수를 상향 조정하기 위해서", exp: "멘토링 장학은 평가 목적이 아니라 숙련 교사(멘토)와 초임 교사(멘티) 간 인간적 교감과 신뢰를 통한 성장·적응 지원 활동입니다.", tip: "신규 교사의 교직 적응과 전문성 신장을 위해 체계적인 멘토링 매뉴얼을 보급하고 멘토-멘티 간 소통 시간을 확보해야 한다.", m: "멘토링 장학 = 1:1 정서적 지지 + 학교 적응 + 전문성 전수" },
             { id: 90, set: 3, topic: "지구별 자율장학", q: "인접한 학교들 간의 교육정보 교환, 공동 공개수업, 합동 생활지도 및 체육·학예 교류 등을 추진하는 장학 형태는?", options: ["지구별 자율장학", "교내 약식장학", "중앙집권적 장학", "개인별 자기장학"], a: "지구별 자율장학", exp: "지구별 자율장학은 지역 내 인접 학교 간 협력을 통해 우수 사례를 일반화하고 지역 특색에 맞는 창의적 학교경영을 도모합니다.", tip: "지구별 자율장학을 활성화하여 단위학교 단독으로 해결하기 어려운 교육 현안을 인근 학교와 협력하여 공동 해결해야 한다.", m: "지구별 자율장학 = 인접 학교 간 공동 연구·교류" },
 
-            // ================= [SET 4: 91 ~ 120] 교육재정·단위학교책임경영제·예산제도·학교책무성 =================
+            // ================= [SET 4: 91 ~ 120] =================
             { id: 91, set: 4, topic: "교육재정 운영과정", q: "교육재정의 운영과정 4단계가 올바른 순서대로 나열된 것은?", options: ["확보 → 배분 → 지출 → 평가", "배분 → 확보 → 평가 → 지출", "계획 → 지출 → 확보 → 감사", "확보 → 지출 → 배분 → 환류"], a: "확보 → 배분 → 지출 → 평가", exp: "교육재정 운영과정(확배지평): 확보(충족성·안정성) → 배분(효율성·공정성) → 지출(자율성·투명성) → 평가(책무성·효과성).", tip: "교육재정은 충족성과 안정성을 바탕으로 확보하여 공정하게 배분하고 투명하게 지출한 뒤 책무성을 평가해야 한다.", m: "확(충안) - 배(효공) - 지(자투) - 평(책효)" },
             { id: 92, set: 4, topic: "교육재정 원리", q: "교육재정 배분 과정에서 '학생의 개인차, 교육환경 차이, 교육프로그램 수준에 따라 재원을 차등 배분해야 한다는 원리'는?", options: ["공정성의 원리", "효율성의 원리", "자율성의 원리", "안정성의 원리"], a: "공정성의 원리", exp: "배분 단계의 공정성의 원리는 수직적 형평성을 반영하여 교육 여건이 열악한 대상에게 더 많은 재원을 지원하는 원칙입니다.", tip: "교육 격차 해소를 위해 공정성의 원리에 입각하여 교육취약계층과 소규모 학교에 대한 차등적 재정 지원을 강화해야 한다.", m: "배분 원리 = 효율성(최소투입·최대성과) + 공정성(차등배분)" },
             { id: 93, set: 4, topic: "교육재정 원리", q: "교육재정 지출 및 평가 단계의 원리 중 '사용한 경비에 대해 납득할 만한 이유를 제시하고 공적으로 책임져야 한다는 원리'는?", options: ["책무성의 원리", "충족성의 원리", "투명성의 원리", "효과성의 원리"], a: "책무성의 원리", exp: "평가 단계에서는 사용한 예산의 정당성을 설명하는 책무성의 원리와 목표 달성도를 측정하는 효과성의 원리가 적용됩니다.", tip: "단위학교 재정 자율권 확대에 발맞추어 예산 집행의 투명성과 교육적 성과에 대한 책무성을 철저히 확보해야 한다.", m: "평가 원리 = 책무성(이유 제시·책임) + 효과성(목표도달 측정)" },
@@ -259,7 +340,7 @@
             { id: 119, set: 4, topic: "발달장학 시대", q: "1970년대 이후 발달장학 시대에 등장한 '수정주의 장학'의 특징으로 가장 적절한 것은?", options: ["과학적 관리의 효율성과 통제를 재강조하여 교사 직무수행 분석과 비용-효과 분석을 중시하였다.", "최소한의 장학이 최선의 장학이라는 자유방임적 태도를 취하였다.", "오직 교사의 정서적 친목 도모에만 초점을 맞추었다.", "장학 활동 자체를 전면 폐지하였다."], a: "과학적 관리의 효율성과 통제를 재강조하여 교사 직무수행 분석과 비용-효과 분석을 중시하였다.", exp: "발달장학 시대에는 과학적 통제를 강조한 수정주의 장학과 교사 직무만족·자아실현을 강조한 인간자원장학이 대조를 이루며 발전했습니다.", tip: "효율성과 책무성을 강조하는 수정주의 장학과 교사의 내적 동기를 존중하는 인간자원장학의 장점을 균형 있게 통합해야 한다.", m: "발달장학 = 수정주의 장학(효율·분석) vs 인간자원장학(만족·성장)" },
             { id: 120, set: 4, topic: "단위학교 예산제도", q: "단위학교 책임경영제가 강조되면서 도입된 '단위학교 예산제도(SBBS)'에서 예산 과정의 중심적 역할을 담당하는 주체는?", options: ["학교장", "교육부 장관", "시·도 의회 의장", "행정실 주무관"], a: "학교장", exp: "SBBS는 학교장이 예산 편성과 집행 과정의 중심적 역할을 담당하며 교직원·학부모의 참여 속에 분권화된 예산을 운영하는 제도입니다.", tip: "단위학교 예산제도 하에서 학교장은 교육과정 운영과 연계하여 재원을 효율적으로 배분하고 구성원의 예산 참여를 보장해야 한다.", m: "SBBS = 학교장 중심의 분권화된 단위학교 예산제도" },
 
-            // ================= [SET 5: 121 ~ 150] 고난도 통합·비교·심화 적용 문제 =================
+            // ================= [SET 5: 121 ~ 150] =================
             { id: 121, set: 5, topic: "교육행정 관점 비교", q: "'교육에 관한 행정(국가공권설)'과 '교육을 위한 행정(조건정비설)'을 비교한 내용으로 옳지 않은 것은?", options: ["국가공권설은 하의상달(Bottom-up)식 민주적 의사결정을 중시한다.", "국가공권설은 교육을 국가 통치의 수단으로 보아 중앙집권적 통제를 강조한다.", "조건정비설은 교육의 자주성과 전문성 보장을 핵심 가치로 삼는다.", "조건정비설은 교육행정을 교수-학습 지원을 위한 봉사적 활동으로 규정한다."], a: "국가공권설은 하의상달(Bottom-up)식 민주적 의사결정을 중시한다.", exp: "국가공권설은 상의하달(Top-down)식 지시·감독을, 조건정비설은 하의상달(Bottom-up)식 민주적 지원을 중시합니다.", tip: "현대 교육행정은 권위주의적인 국가공권설을 지양하고 단위학교의 자율성을 지원하는 조건정비설에 기초해야 한다.", m: "공권설(Top-down 통제) vs 조건정비설(Bottom-up 지원)" },
             { id: 122, set: 5, topic: "행정 이론 발달", q: "교육행정의 발달 과정 4단계가 시간적 흐름에 따라 바르게 배열된 것은?", options: ["과학적 관리론 → 인간관계론 → 행동과학론 → 체제이론", "인간관계론 → 과학적 관리론 → 체제이론 → 행동과학론", "체제이론 → 행동과학론 → 과학적 관리론 → 인간관계론", "행동과학론 → 체제이론 → 인간관계론 → 과학적 관리론"], a: "과학적 관리론 → 인간관계론 → 행동과학론 → 체제이론", exp: "고전적 관리론(과학적 관리론·관료제) → 인간관계론 → 행동과학론(체제이론 포함) 순으로 발전해 왔습니다.", tip: "교육행정 이론은 구조와 능률 중심에서 인간관계와 심리적 요인을 거쳐 조직과 환경의 통합적 상호작용을 보는 체제이론으로 발전해 왔다.", m: "과(1910) - 인(1930) - 행(1950) - 체(1960)" },
             { id: 123, set: 5, topic: "겟젤스·구바 모형", q: "겟젤스와 구바의 사회과정모형에서 '군인사회(A)', '학교사회(B)', '예술가사회(C)'를 규범적 차원(역할)과 개인적 차원(인성)의 비중으로 비교할 때 옳은 설명은?", options: ["학교사회는 관료적 기대(A)와 전문가적 자율성(C)의 성격을 모두 지닌 중간 형태(B)이다.", "학교사회는 인성보다 역할 기대가 100% 지배하는 군인사회와 완전히 동일하다.", "예술가사회는 개인의 인성보다 제도적 역할 기대가 가장 강하게 작용한다.", "학교 교원은 전문가이므로 제도적 역할 기대는 전혀 적용받지 않는다."], a: "학교사회는 관료적 기대(A)와 전문가적 자율성(C)의 성격을 모두 지닌 중간 형태(B)이다.", exp: "학교는 공교육 체제로서 관료제적 역할 기대(A)를 받으면서도 교사의 전문적 자율성(C)이 요구되는 이중적 성격을 지닙니다.", tip: "학교 경영자는 관료적 역할 기대와 교사 개인의 전문적 자율성이 조화를 이루도록 균형 잡힌 행정을 펼쳐야 한다.", m: "A(군인:역할↑) - B(학교:중간) - C(예술가:인성↑)" },
@@ -293,16 +374,18 @@
         ];
 
         // =========================================================================
-        // 2. 상태 관리 및 5세트 순환 로직 (새로고침 시 세트 자동 전환)
+        // 3. 상태 관리 및 셔플·화면 전환 엔진
         // =========================================================================
-        let currentSetNumber = 1;
+        let currentMode = 'home'; // 'home' | 'set' | 'wrong'
+        let activeSetNum = 1;
         let currentQuestions = [];
         let currentIndex = 0;
         let isSubmitted = false;
-        let wrongList = JSON.parse(localStorage.getItem('edu_admin_150_wrong') || '[]');
-        let activeTab = 'set';
 
-        // 배열 무작위 셔플 함수 (Fisher-Yates 알고리즘)
+        let wrongList = JSON.parse(localStorage.getItem('santa_admin150_wrong') || '[]');
+        let completedSets = JSON.parse(localStorage.getItem('santa_admin150_completed') || '[]');
+
+        // Fisher-Yates 100% 무작위 배열 셔플
         function shuffleArray(array) {
             const arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -312,33 +395,6 @@
             return arr;
         }
 
-        // 새로고침 시마다 다음 세트(1 -> 2 -> 3 -> 4 -> 5 -> 1)로 전환
-        function advanceSetOnReload() {
-            const lastSet = parseInt(localStorage.getItem('edu_admin_last_set') || '0', 10);
-            currentSetNumber = (lastSet % 5) + 1;
-            localStorage.setItem('edu_admin_last_set', currentSetNumber.toString());
-        }
-
-        function initApp() {
-            advanceSetOnReload();
-            updateSetUI();
-            updateWrongBadge();
-            filterQuestions('set');
-            showToast(`🔄 새로고침 감지: [SET ${currentSetNumber}] (30문항) 세트가 새롭게 출제되었습니다!`);
-        }
-
-        function updateSetUI() {
-            document.getElementById('set-indicator').innerText = `SET ${currentSetNumber}`;
-        }
-
-        function nextManualSet() {
-            currentSetNumber = (currentSetNumber % 5) + 1;
-            localStorage.setItem('edu_admin_last_set', currentSetNumber.toString());
-            updateSetUI();
-            filterQuestions('set');
-            showToast(`✨ [SET ${currentSetNumber}] 세트로 전환되었습니다! (문항 및 보기 무작위 셔플 완료)`);
-        }
-
         function showToast(msg) {
             const banner = document.getElementById('toast-banner');
             banner.innerText = msg;
@@ -346,7 +402,20 @@
             clearTimeout(window.toastTimer);
             window.toastTimer = setTimeout(() => {
                 banner.classList.add('hidden');
-            }, 3500);
+            }, 3000);
+        }
+
+        function updateNavActive(activeId) {
+            const navButtons = ['nav-home', 'nav-set-1', 'nav-set-2', 'nav-set-3', 'nav-set-4', 'nav-set-5', 'nav-wrong'];
+            navButtons.forEach(id => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                if (id === activeId) {
+                    btn.className = "relative px-4 py-2 rounded-full text-xs md:text-[13px] font-bold bg-[#4f46e5] text-white shadow-sm flex items-center gap-1.5 transition-all";
+                } else {
+                    btn.className = "relative px-4 py-2 rounded-full text-xs md:text-[13px] font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all";
+                }
+            });
         }
 
         function updateWrongBadge() {
@@ -359,80 +428,130 @@
             }
         }
 
-        function filterQuestions(tab) {
-            activeTab = tab;
-            ['set', 'all', 'wrong'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if (!btn) return;
-                if (t === tab) {
-                    btn.className = "relative px-5 py-2 rounded-full text-xs md:text-sm font-bold bg-[#4f46e5] text-white shadow-md transition-all";
-                } else {
-                    btn.className = "relative px-5 py-2 rounded-full text-xs md:text-sm font-bold text-slate-600 hover:bg-slate-200 transition-all";
-                }
-            });
+        // 대시보드 5개 세트 카드 렌더링
+        function renderSetCards() {
+            const grid = document.getElementById('set-cards-grid');
+            grid.innerHTML = setMetaInfo.map(meta => {
+                const isDone = completedSets.includes(meta.set);
+                const statusBadge = isDone
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">응시완료 ✓</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-500">미응시</span>`;
 
-            if (tab === 'set') {
-                currentQuestions = shuffleArray(rawQuizData.filter(q => q.set === currentSetNumber));
-            } else if (tab === 'all') {
-                currentQuestions = shuffleArray(rawQuizData);
-            } else if (tab === 'wrong') {
-                currentQuestions = shuffleArray(rawQuizData.filter(q => wrongList.includes(q.id)));
-            }
+                return `
+                    <div onclick="startSet(${meta.set})" class="set-card p-6 cursor-pointer flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3.5">
+                                <span class="px-3 py-1 rounded-full text-xs font-extrabold ${meta.badgeStyle}">
+                                    ${meta.badge}
+                                </span>
+                                ${statusBadge}
+                            </div>
+                            <h3 class="text-base md:text-[17px] font-extrabold text-slate-900 leading-snug mb-2">
+                                ${meta.title}
+                            </h3>
+                            <p class="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-6">
+                                ${meta.keywords}
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-medium">객관식 4지선다 · 보기 자동 셔플</span>
+                            <span class="text-[#4f46e5] font-extrabold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                세트 풀기 <span>→</span>
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
+        // 전체 세트 목록(홈) 보기
+        function showHome() {
+            currentMode = 'home';
+            updateNavActive('nav-home');
+            renderSetCards();
+            document.getElementById('home-view').classList.remove('hidden');
+            document.getElementById('quiz-view').classList.add('hidden');
+        }
+
+        // 특정 세트(1~5) 시작 (문항 및 보기 100% 무작위 셔플)
+        function startSet(setNum) {
+            currentMode = 'set';
+            activeSetNum = setNum;
+            updateNavActive(`nav-set-${setNum}`);
+
+            const filtered = rawQuizData.filter(q => q.set === setNum);
+            currentQuestions = shuffleArray(filtered);
             currentIndex = 0;
+
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('quiz-view').classList.remove('hidden');
             renderQuestion();
         }
 
-        function changeTab(tab) {
-            filterQuestions(tab);
+        // 오답 노트 시작
+        function startWrongNote() {
+            currentMode = 'wrong';
+            updateNavActive('nav-wrong');
+
+            const filtered = rawQuizData.filter(q => wrongList.includes(q.id));
+            currentQuestions = shuffleArray(filtered);
+            currentIndex = 0;
+
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('quiz-view').classList.remove('hidden');
+            renderQuestion();
         }
 
+        function reshuffleCurrentRound() {
+            if (currentMode === 'set') {
+                startSet(activeSetNum);
+                showToast(`🔀 제${activeSetNum}세트 문항과 보기가 새롭게 셔플되었습니다!`);
+            } else if (currentMode === 'wrong') {
+                startWrongNote();
+                showToast(`🔀 오답 노트 문항과 보기가 새롭게 셔플되었습니다!`);
+            }
+        }
+
+        // 개별 문항 렌더링 (매번 보기 4개 순서도 100% 무작위 셔플)
         function renderQuestion() {
             isSubmitted = false;
-            document.getElementById('feedback-card').classList.add('hidden');
+            document.getElementById('feedback-box').classList.add('hidden');
 
             if (currentQuestions.length === 0) {
-                document.getElementById('set-badge').innerText = activeTab === 'wrong' ? '오답 노트 비어있음' : `SET ${currentSetNumber}`;
-                document.getElementById('progress-text').innerText = `0 / 0`;
-                document.getElementById('question-text').innerText = "현재 복습할 오답 문항이 없습니다. 완벽합니다! 🎉";
-                document.getElementById('interactive-area').innerHTML = "";
-                document.getElementById('action-btn').classList.add('hidden');
+                document.getElementById('quiz-set-badge').innerText = "오답 노트 비어있음";
+                document.getElementById('quiz-topic').innerText = "복습 완료";
+                document.getElementById('quiz-progress').innerText = "0 / 0";
+                document.getElementById('quiz-question').innerText = "현재 저장된 오답 문항이 없습니다. 전체 세트 목록에서 모의고사를 풀어보세요! 🎉";
+                document.getElementById('quiz-options').innerHTML = "";
+                document.getElementById('quiz-action-btn').classList.add('hidden');
                 return;
             }
 
             const q = currentQuestions[currentIndex];
-            document.getElementById('action-btn').classList.remove('hidden');
-            document.getElementById('action-btn').innerText = "정답 확인";
-            document.getElementById('action-btn').className = "w-full py-3.5 rounded-xl font-bold text-white bg-[#4338ca] hover:bg-[#3730a3] shadow-md transition-all text-sm md:text-base";
-            document.getElementById('action-btn').onclick = submitAnswer;
+            const actionBtn = document.getElementById('quiz-action-btn');
+            actionBtn.classList.remove('hidden');
+            actionBtn.innerText = "정답 확인";
+            actionBtn.className = "w-full py-3.5 rounded-xl font-bold text-white bg-[#4f46e5] hover:bg-[#4338ca] shadow-sm transition-all text-sm md:text-base";
+            actionBtn.onclick = submitAnswer;
 
-            if (activeTab === 'set') {
-                document.getElementById('set-badge').innerText = `SET ${currentSetNumber} (30문항)`;
-            } else if (activeTab === 'all') {
-                document.getElementById('set-badge').innerText = `전체 150제 (SET ${q.set} 출제)`;
-            } else {
-                document.getElementById('set-badge').innerText = `오답 복습 (SET ${q.set})`;
-            }
+            document.getElementById('quiz-set-badge').innerText =
+                currentMode === 'set' ? `SET 0${activeSetNum} · 30문항` : `오답 복습 (SET 0${q.set})`;
+            document.getElementById('quiz-topic').innerText = q.topic;
+            document.getElementById('quiz-progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('quiz-question').innerText = q.q;
 
-            document.getElementById('topic-name').innerText = q.topic;
-            document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
-            document.getElementById('question-text').innerText = q.q;
-
-            // 매 문제 렌더링 시 모든 보기의 순서를 100% 무작위 셔플
+            // 보기 100% 무작위 재배치
             const shuffledOptions = shuffleArray(q.options);
-            const labels = ['①', '②', '③', '④'];
-            let optionsHtml = '<div class="space-y-3">';
-            shuffledOptions.forEach((opt, idx) => {
-                optionsHtml += `
-                    <label class="option-label flex items-center p-3.5 md:p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-indigo-50/50 hover:border-indigo-200 transition-all">
-                        <input type="radio" name="mcq-option" value="${opt.replace(/"/g, '&quot;')}" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                        <span class="ml-3 font-bold text-indigo-600 text-sm">${labels[idx]}</span>
-                        <span class="ml-2 font-medium text-slate-700 text-sm md:text-base">${opt}</span>
-                    </label>
-                `;
-            });
-            optionsHtml += '</div>';
-            document.getElementById('interactive-area').innerHTML = optionsHtml;
+            const numIcons = ['①', '②', '③', '④'];
+            const optionsContainer = document.getElementById('quiz-options');
+
+            optionsContainer.innerHTML = shuffledOptions.map((opt, idx) => `
+                <label class="option-label flex items-center p-4 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-indigo-50/40 hover:border-indigo-200 transition-all">
+                    <input type="radio" name="mcq-option" value="${opt.replace(/"/g, '&quot;')}" class="w-4 h-4 text-[#4f46e5] focus:ring-[#4f46e5]">
+                    <span class="ml-3 font-extrabold text-[#4f46e5] text-sm">${numIcons[idx]}</span>
+                    <span class="ml-2.5 font-medium text-slate-700 text-sm md:text-base">${opt}</span>
+                </label>
+            `).join('');
         }
 
         function submitAnswer() {
@@ -446,55 +565,53 @@
 
             isSubmitted = true;
             const q = currentQuestions[currentIndex];
-            const userAnswer = selected.value;
-            const isCorrect = (userAnswer === q.a);
+            const isCorrect = (selected.value === q.a);
 
-            // 선택한 보기 외 라디오 버튼 비활성화 및 정답/오답 시각 강조
+            // 보기 잠금 및 정답/오답 표시
             document.querySelectorAll('input[name="mcq-option"]').forEach(radio => {
                 radio.disabled = true;
-                const parentLabel = radio.closest('label');
+                const label = radio.closest('label');
                 if (radio.value === q.a) {
-                    parentLabel.classList.add('!bg-emerald-50', '!border-emerald-400', '!text-emerald-900');
+                    label.classList.add('!bg-emerald-50', '!border-emerald-400', '!text-emerald-900');
                 } else if (radio.checked && !isCorrect) {
-                    parentLabel.classList.add('!bg-pink-50', '!border-pink-400', '!text-pink-900');
+                    label.classList.add('!bg-pink-50', '!border-pink-400', '!text-pink-900');
                 }
             });
 
-            // 오답노트 저장 및 갱신
+            // 오답 노트 반영
             if (!isCorrect) {
                 if (!wrongList.includes(q.id)) wrongList.push(q.id);
             } else {
                 wrongList = wrongList.filter(id => id !== q.id);
             }
-            localStorage.setItem('edu_admin_150_wrong', JSON.stringify(wrongList));
+            localStorage.setItem('santa_admin150_wrong', JSON.stringify(wrongList));
             updateWrongBadge();
 
-            // 결과 렌더링
-            const alertBox = document.getElementById('result-alert');
-            const alertIcon = document.getElementById('result-icon');
-            const alertMsg = document.getElementById('result-message');
+            // 피드백 카드 출력
+            const resultBanner = document.getElementById('result-banner');
+            const resultIcon = document.getElementById('result-icon');
+            const resultMsg = document.getElementById('result-msg');
 
             if (isCorrect) {
-                alertBox.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 font-bold text-sm md:text-base flex items-center gap-2";
-                alertIcon.innerText = "🎉";
-                alertMsg.innerText = "정답입니다!";
+                resultBanner.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 font-bold text-sm md:text-base flex items-center gap-2";
+                resultIcon.innerText = "🎉";
+                resultMsg.innerText = "정답입니다!";
             } else {
-                alertBox.className = "p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2";
-                alertIcon.innerText = "💡";
-                alertMsg.innerText = `아쉽습니다. 정답은 [ ${q.a} ] 입니다.`;
+                resultBanner.className = "p-4 rounded-xl bg-pink-50 border border-pink-100 text-pink-600 font-bold text-sm md:text-base flex items-center gap-2";
+                resultIcon.innerText = "💡";
+                resultMsg.innerText = `아쉽습니다. 정답은 [ ${q.a} ] 입니다.`;
             }
 
-            document.getElementById('exp-text').innerText = q.exp;
-            document.getElementById('m-text').innerText = q.m;
-            document.getElementById('tip-text').innerText = q.tip;
+            document.getElementById('fb-exp').innerText = q.exp;
+            document.getElementById('fb-m').innerText = q.m;
+            document.getElementById('fb-tip').innerText = q.tip;
+            document.getElementById('feedback-box').classList.remove('hidden');
 
-            document.getElementById('feedback-card').classList.remove('hidden');
-
-            // 다음 버튼으로 전환
-            const btn = document.getElementById('action-btn');
-            btn.innerText = "다음 문제로 (Enter)";
-            btn.className = "w-full py-3.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-md transition-all text-sm md:text-base";
-            btn.onclick = nextQuestion;
+            // 버튼 변경
+            const actionBtn = document.getElementById('quiz-action-btn');
+            actionBtn.innerText = currentIndex < currentQuestions.length - 1 ? "다음 문제로 (Enter)" : "세트 완료 및 목록으로 (Enter)";
+            actionBtn.className = "w-full py-3.5 rounded-xl font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-sm transition-all text-sm md:text-base";
+            actionBtn.onclick = nextQuestion;
         }
 
         function nextQuestion() {
@@ -502,20 +619,32 @@
                 currentIndex++;
                 renderQuestion();
             } else {
-                showToast(`🎊 현재 라운드의 모든 문제를 완료했습니다! 처음부터 다시 셔플하여 시작합니다.`);
-                filterQuestions(activeTab);
+                if (currentMode === 'set') {
+                    if (!completedSets.includes(activeSetNum)) {
+                        completedSets.push(activeSetNum);
+                        localStorage.setItem('santa_admin150_completed', JSON.stringify(completedSets));
+                    }
+                    showToast(`🎊 제${activeSetNum}세트(30문항) 학습을 완료했습니다!`);
+                } else {
+                    showToast(`🎊 오답 복습 라운드를 모두 완료했습니다!`);
+                }
+                showHome();
             }
         }
 
         // 키보드 Enter 단축키 지원
         document.addEventListener('keydown', function(e) {
+            if (currentMode === 'home') return;
             if (e.key === 'Enter') {
                 if (!isSubmitted) submitAnswer();
                 else nextQuestion();
             }
         });
 
-        window.onload = initApp;
+        window.onload = function() {
+            updateWrongBadge();
+            showHome();
+        };
     </script>
 </body>
 </html>
